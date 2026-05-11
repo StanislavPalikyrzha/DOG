@@ -30,3 +30,19 @@ php -S 127.0.0.1:8000
 2. Open:
 
 - `http://127.0.0.1:8000/`
+- `http://127.0.0.1:8000/docs/scholarly.html`
+
+3. Demo accounts:
+
+- `admin@dog.local / admin123`
+- `editor@dog.local / editor123`
+- `viewer@dog.local / viewer123`
+
+## Project structure
+
+- `index.php` - main responsive interface
+- `api.php` - AJAX endpoints and download actions
+- `bootstrap.php` - common setup helpers
+- `init_db.php` - SQLite initialization routine
+- `lib/` - database, auth, repositories, templating and PDF logic
+- `assets/` - CSS and browser JavaScript
