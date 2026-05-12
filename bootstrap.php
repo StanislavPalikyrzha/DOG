@@ -33,3 +33,37 @@ function request_json(): array
     }
 
     $decoded = json_decode($raw, true);
+    return is_array($decoded) ? $decoded : [];
+}
+
+function current_user(): ?array
+{
+    if (!isset($_SESSION['user_id'])) {
+        return null;
+    }
+
+    return UserRepository::findById((int) $_SESSION['user_id']);
+}
+
+function require_user(): array
+{
+    $user = current_user();
+    if ($user === null) {
+        json_response(['ok' => false, 'error' => 'Authentication required.'], 401);
+    }
+
+    return $user;
+}
+
+function require_admin(): array
+{
+    $user = require_user();
+    if (($user['role'] ?? '') !== 'admin') {
+        json_response(['ok' => false, 'error' => 'Admin access required.'], 403);
+    }
+
+    return $user;
+}
+
+function require_editor(): array
+{
