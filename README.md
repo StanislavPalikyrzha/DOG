@@ -46,3 +46,18 @@ php -S 127.0.0.1:8000
 - `init_db.php` - SQLite initialization routine
 - `lib/` - database, auth, repositories, templating and PDF logic
 - `assets/` - CSS and browser JavaScript
+- `docs/` - mandatory project deliverables
+- `samples/` - CSV examples for imports
+
+## Security notes
+
+- all database writes use PDO prepared statements
+- generated template values are HTML-escaped on the server
+- document preview normalization strips script tags before rendering
+- role checks protect admin-only actions
+
+## Open-source licensing
+
+- project source code: MIT License, see `LICENSE`
+- documentation and sample content: CC BY 4.0, see `CONTENT-LICENSE.md`
+
