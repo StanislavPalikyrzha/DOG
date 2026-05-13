@@ -56,3 +56,32 @@ final class Database
 
         $schema = <<<'SQL'
 CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    display_name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL CHECK (role IN ('admin', 'editor', 'viewer')),
+    created_at TEXT NOT NULL
+);
+
+CREATE TABLE templates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    category TEXT NOT NULL,
+    description TEXT NOT NULL,
+    template_html TEXT NOT NULL,
+    template_css TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE documents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    template_id INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    source_type TEXT NOT NULL,
+    data_json TEXT NOT NULL,
+    html_output TEXT NOT NULL,
+    pdf_path TEXT NOT NULL,
