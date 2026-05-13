@@ -27,3 +27,32 @@ final class Database
         if (self::$pdo === null) {
             self::$pdo = new PDO('sqlite:' . DATABASE_FILE);
             self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            self::$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        }
+
+        return self::$pdo;
+    }
+
+    public static function reset(): void
+    {
+        self::$pdo = null;
+        if (file_exists(DATABASE_FILE)) {
+            unlink(DATABASE_FILE);
+        }
+
+        foreach (glob(EXPORTS_DIR . '/*') ?: [] as $path) {
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+
+        self::initialize();
+    }
+
+    private static function initialize(): void
+    {
+        $pdo = new PDO('sqlite:' . DATABASE_FILE);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $schema = <<<'SQL'
+CREATE TABLE users (
