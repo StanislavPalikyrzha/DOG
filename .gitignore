@@ -1,0 +1,16 @@
+.DS_Store
+.idea/
+
+database/*.sqlite
+database/*.sqlite-*
+
+exports/*.html
+exports/*.pdf
+
+tmp/*.png
+tmp/*.jpg
+tmp/*.jpeg
+tmp/*.webp
+
+data/*
+!data/.gitkeep

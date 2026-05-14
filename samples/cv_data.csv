@@ -1,0 +1,3 @@
+full_name,email,phone,city,job_title,summary,skills,experience_years,company_name,portfolio_url
+Maria Popescu,maria.popescu@example.com,+40 721 555 111,Iasi,Frontend Developer,"Создаёт доступные интерфейсы и поддерживает SPA без фреймворков.","HTML5, CSS3, JavaScript, Accessibility",3,Pixel Forge,https://portfolio.example/maria-popescu
+Victor Marin,victor.marin@example.com,+40 722 111 333,Cluj-Napoca,PHP Developer,"Разрабатывает REST API на plain PHP и проектирует SQLite-схемы.","PHP, SQLite, PDO, FPDF",5,Atlas Consulting,https://portfolio.example/victor-marin
