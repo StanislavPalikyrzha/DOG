@@ -172,3 +172,32 @@ HTML,
             ],
             [
                 'Invoice simple',
+                'invoice-simple',
+                'Accounting',
+                'Simple invoice-like document for service quotes.',
+                <<<'HTML'
+<section class="doc-header">
+  <h1>Invoice {{uppercase:number}}</h1>
+  <p>Client: {{client}}</p>
+  <p>Supplier: {{supplier}}</p>
+</section>
+<section>
+  <h2>Summary</h2>
+  <p>Service: {{service}}</p>
+  <p>Amount: {{amount}}</p>
+  <p>Issued at: {{today}}</p>
+</section>
+<section>
+  {{if:notes}}<p>Notes: {{notes}}</p>{{/if:notes}}
+</section>
+HTML,
+                '.doc-header{display:flex;flex-direction:column;gap:.4rem;padding-bottom:1rem;border-bottom:2px solid #d6cdbf}h2{margin-top:1.4rem}'
+            ],
+            [
+                'Catalog card',
+                'catalog-card',
+                'Products',
+                'Product card template for catalogs or mini listings.',
+                <<<'HTML'
+<section class="doc-header">
+  <h1>{{title}}</h1>
