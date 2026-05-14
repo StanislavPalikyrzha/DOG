@@ -114,3 +114,32 @@ SQL;
 
         $pdo->exec($schema);
 
+        $now = date('c');
+        $insertUser = $pdo->prepare(
+            'INSERT INTO users (display_name, email, password_hash, role, created_at) VALUES (:display_name, :email, :password_hash, :role, :created_at)'
+        );
+
+        foreach ([
+            ['Admin User', 'admin@dog.local', 'admin123', 'admin'],
+            ['Editor User', 'editor@dog.local', 'editor123', 'editor'],
+            ['Viewer User', 'viewer@dog.local', 'viewer123', 'viewer'],
+        ] as [$name, $email, $password, $role]) {
+            $insertUser->execute([
+                ':display_name' => $name,
+                ':email' => $email,
+                ':password_hash' => password_hash($password, PASSWORD_DEFAULT),
+                ':role' => $role,
+                ':created_at' => $now,
+            ]);
+        }
+
+        $insertTemplate = $pdo->prepare(
+            'INSERT INTO templates (name, slug, category, description, template_html, template_css, created_at, updated_at)
+             VALUES (:name, :slug, :category, :description, :template_html, :template_css, :created_at, :updated_at)'
+        );
+
+        $templates = [
+            [
+                'CV academic',
+                'cv-academic',
+                'CV',
