@@ -85,3 +85,32 @@ CREATE TABLE documents (
     data_json TEXT NOT NULL,
     html_output TEXT NOT NULL,
     pdf_path TEXT NOT NULL,
+    created_by INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY(template_id) REFERENCES templates(id),
+    FOREIGN KEY(created_by) REFERENCES users(id)
+);
+
+CREATE TABLE import_jobs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    file_name TEXT NOT NULL,
+    row_count INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    notes TEXT NOT NULL,
+    created_by INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY(created_by) REFERENCES users(id)
+);
+
+CREATE TABLE audit_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    actor_email TEXT NOT NULL,
+    action TEXT NOT NULL,
+    details TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+SQL;
+
+        $pdo->exec($schema);
+
