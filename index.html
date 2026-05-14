@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoG | Foundation</title>
+    <title>DoG | User And Template Management</title>
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
-    <div class="layout">
+    <div class="page-shell">
         <aside class="sidebar">
             <div class="brand">
                 <div class="brand-mark">DoG</div>
@@ -17,50 +17,58 @@
                 </div>
             </div>
 
-            <nav class="nav">
-                <button class="nav-button active" type="button">Dashboard</button>
-                <button class="nav-button" type="button" disabled>Users</button>
-                <button class="nav-button" type="button" disabled>Templates</button>
-                <button class="nav-button" type="button" disabled>Documents</button>
+            <nav class="nav-list">
+                <button class="nav-button active" type="button" data-section="dashboard">Dashboard</button>
+                <button class="nav-button" type="button" data-section="users" data-admin-only="true">Users</button>
+                <button class="nav-button" type="button" data-section="templates">Templates</button>
             </nav>
 
-            <div class="sidebar-footer">
+            <div class="side-footer">
                 <div id="sessionBadge" class="session-badge">Guest</div>
                 <button id="logoutButton" class="ghost-button hidden" type="button">Log Out</button>
             </div>
         </aside>
 
-        <main class="content">
-            <section id="loginSection" class="panel hero">
+        <main class="main-content">
+            <section id="loginSection" class="panel hero-panel">
                 <div class="hero-copy">
-                    <p class="eyebrow">Day 1 Foundation</p>
-                    <h2>Authentication and dashboard base for the official DoG repository.</h2>
-                    <p>This first delivery slice sets up SQLite storage, default users and templates, authentication routes, and a minimal dashboard shell.</p>
+                    <p class="eyebrow">Day 2 Management Slice</p>
+                    <h2>Manage users and templates from the same DoG workspace.</h2>
+                    <p>This slice keeps the Day 1 auth base and adds practical admin CRUD for users and templates, plus a cleaner sidebar-driven dashboard.</p>
 
-                    <div class="demo-list">
-                        <button type="button" class="demo-card" data-demo-username="admin" data-demo-password="admin123">
+                    <div class="hero-meta">
+                        <span>Users: admin, editor, viewer</span>
+                        <span>Templates: role-based access</span>
+                        <span>Stack: Vanilla JS, PHP, SQLite</span>
+                    </div>
+
+                    <div class="credentials-block">
+                        <p class="eyebrow">Demo accounts</p>
+                        <div class="credentials">
+                        <button type="button" class="credential-chip" data-demo-username="admin" data-demo-password="admin123">
                             <span>Admin</span>
                             <strong>admin / admin123</strong>
                         </button>
-                        <button type="button" class="demo-card" data-demo-username="editor" data-demo-password="editor123">
+                        <button type="button" class="credential-chip" data-demo-username="editor" data-demo-password="editor123">
                             <span>Editor</span>
                             <strong>editor / editor123</strong>
                         </button>
-                        <button type="button" class="demo-card" data-demo-username="viewer" data-demo-password="viewer123">
+                        <button type="button" class="credential-chip" data-demo-username="viewer" data-demo-password="viewer123">
                             <span>Viewer</span>
                             <strong>viewer / viewer123</strong>
                         </button>
+                        </div>
                     </div>
                 </div>
 
-                <form id="loginForm" class="panel inset-card" autocomplete="off">
-                    <div class="form-head">
+                <form id="loginForm" class="card form-card" autocomplete="off">
+                    <div class="form-card-head">
                         <p class="eyebrow">Access</p>
                         <h3>Sign In</h3>
-                        <p class="muted-text">The form starts empty on purpose. Use a demo account or type credentials manually.</p>
+                        <p class="form-intro">Use a demo account on the left or enter credentials manually to inspect the dashboard, users, and templates sections.</p>
                     </div>
-                    <input type="text" name="fake_username" class="honeypot" autocomplete="username" tabindex="-1" aria-hidden="true">
-                    <input type="password" name="fake_password" class="honeypot" autocomplete="current-password" tabindex="-1" aria-hidden="true">
+                    <input type="text" name="fake_username" class="honeypot-field" autocomplete="username" tabindex="-1" aria-hidden="true">
+                    <input type="password" name="fake_password" class="honeypot-field" autocomplete="current-password" tabindex="-1" aria-hidden="true">
                     <label>
                         <span>Username</span>
                         <input type="text" name="username" placeholder="Enter your username" autocomplete="off" autocapitalize="none" spellcheck="false" required>
@@ -80,13 +88,89 @@
             <section id="appSection" class="hidden">
                 <header class="topbar">
                     <div>
-                        <p class="eyebrow">Document Workspace</p>
-                        <h2>Dashboard</h2>
+                        <p class="eyebrow">Management Workspace</p>
+                        <h2 id="sectionTitle">Dashboard</h2>
                     </div>
                     <button id="refreshButton" class="ghost-button" type="button">Refresh Data</button>
                 </header>
 
-                <section class="stats-grid" id="statsGrid"></section>
+                <section id="dashboardSection" class="app-section">
+                    <div id="statsGrid" class="stats-grid"></div>
+                    <div class="double-grid">
+                        <article class="panel">
+                            <h3>Day 2 Scope</h3>
+                            <p>The official DoG repository now exposes the admin CRUD base for users and templates, while keeping role-gated reads for non-admin users.</p>
+                            <ul class="feature-list">
+                                <li>Day 1 authentication and dashboard stats</li>
+                                <li>Users API with create, edit, and delete</li>
+                                <li>Templates API with role-aware listing</li>
+                                <li>Sidebar navigation between dashboard sections</li>
+                            </ul>
+                        </article>
+                        <article class="panel">
+                            <h3>How To Verify</h3>
+                            <p>Sign in as <strong>admin</strong> to manage both users and templates. Sign in as <strong>editor</strong> or <strong>viewer</strong> to confirm admin-only routes stay blocked.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section id="usersSection" class="app-section hidden">
+                    <div class="double-grid">
+                        <article class="panel">
+                            <h3>User Editor</h3>
+                            <form id="userForm" class="stack-form">
+                                <input type="hidden" name="id">
+                                <label><span>Full Name</span><input type="text" name="full_name" required></label>
+                                <label><span>Username</span><input type="text" name="username" required></label>
+                                <label><span>Password</span><input type="password" name="password" placeholder="Leave empty when updating"></label>
+                                <label>
+                                    <span>Role</span>
+                                    <select name="role">
+                                        <option value="admin">admin</option>
+                                        <option value="editor">editor</option>
+                                        <option value="viewer">viewer</option>
+                                    </select>
+                                </label>
+                                <label class="checkbox-row"><input type="checkbox" name="is_active" checked> Active</label>
+                                <div class="button-row">
+                                    <button type="submit" class="primary-button">Save User</button>
+                                    <button type="button" id="userResetButton" class="ghost-button">Reset</button>
+                                </div>
+                            </form>
+                        </article>
+                        <article class="panel">
+                            <h3>Users List</h3>
+                            <div id="usersList" class="stack-list"></div>
+                        </article>
+                    </div>
+                </section>
+
+                <section id="templatesSection" class="app-section hidden">
+                    <div class="double-grid">
+                        <article class="panel" id="templateEditorPanel">
+                            <h3>Template Editor</h3>
+                            <form id="templateForm" class="stack-form">
+                                <input type="hidden" name="id">
+                                <label><span>Title</span><input type="text" name="title" required></label>
+                                <label><span>Slug</span><input type="text" name="slug" placeholder="Leave empty for auto-generation"></label>
+                                <label><span>Category</span><input type="text" name="category" value="general" required></label>
+                                <label><span>Description</span><textarea name="description" rows="2"></textarea></label>
+                                <label><span>Placeholders (comma-separated)</span><input type="text" name="placeholders" placeholder="full_name,email,city"></label>
+                                <label><span>Allowed Roles</span><input type="text" name="allowed_roles" value="admin,editor,viewer"></label>
+                                <label class="checkbox-row"><input type="checkbox" name="is_active" checked> Active</label>
+                                <label><span>Template HTML</span><textarea name="html_content" rows="12" required></textarea></label>
+                                <div class="button-row">
+                                    <button type="submit" class="primary-button">Save Template</button>
+                                    <button type="button" id="templateResetButton" class="ghost-button">Reset</button>
+                                </div>
+                            </form>
+                        </article>
+                        <article class="panel">
+                            <h3>Templates List</h3>
+                            <div id="templatesList" class="stack-list"></div>
+                        </article>
+                    </div>
+                </section>
             </section>
         </main>
     </div>
