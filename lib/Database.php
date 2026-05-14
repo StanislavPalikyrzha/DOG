@@ -143,3 +143,32 @@ SQL;
                 'CV academic',
                 'cv-academic',
                 'CV',
+                'Template for student CVs generated from JSON or CSV data.',
+                <<<'HTML'
+<section class="doc-header">
+  <h1>{{name}}</h1>
+  <p class="lead">{{role}}</p>
+  <p>{{summary}}</p>
+</section>
+<section>
+  <h2>Contact</h2>
+  <ul>
+    <li>Email: {{email}}</li>
+    <li>Phone: {{phone}}</li>
+    <li>City: {{city}}</li>
+  </ul>
+</section>
+<section>
+  <h2>Skills</h2>
+  <p>{{skills}}</p>
+</section>
+<section>
+  <h2>Availability</h2>
+  {{if:portfolio}}<p>Portfolio: {{portfolio}}</p>{{/if:portfolio}}
+  <small>Generated on {{today}}</small>
+</section>
+HTML,
+                '.doc-header{border-bottom:2px solid #c4b79f;padding-bottom:1rem;margin-bottom:1rem}.lead{font-weight:700;color:#7a5940}h2{margin-top:1.4rem}'
+            ],
+            [
+                'Invoice simple',
