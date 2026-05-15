@@ -201,3 +201,32 @@ HTML,
                 <<<'HTML'
 <section class="doc-header">
   <h1>{{title}}</h1>
+  <p class="lead">SKU {{sku}}</p>
+</section>
+<section>
+  <p>{{summary}}</p>
+  <p>Price: {{price}}</p>
+  <p>Supplier: {{supplier}}</p>
+  <p>Updated: {{today}}</p>
+</section>
+HTML,
+                '.lead{font-weight:700;letter-spacing:.08em;color:#8d6b4c}.doc-header{border-bottom:1px dashed #c7b8a1;padding-bottom:.8rem;margin-bottom:1rem}'
+            ],
+        ];
+
+        foreach ($templates as [$name, $slug, $category, $description, $templateHtml, $templateCss]) {
+            $insertTemplate->execute([
+                ':name' => $name,
+                ':slug' => $slug,
+                ':category' => $category,
+                ':description' => $description,
+                ':template_html' => $templateHtml,
+                ':template_css' => $templateCss,
+                ':created_at' => $now,
+                ':updated_at' => $now,
+            ]);
+        }
+    }
+}
+
+
