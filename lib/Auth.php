@@ -16,3 +16,21 @@ final class Auth
 
         session_regenerate_id(true);
         $_SESSION['user_id'] = (int) $user['id'];
+        AuditRepository::log($user['email'], 'auth.login', 'Successful login.');
+
+        return $user;
+    }
+
+    public static function logout(?array $user): void
+    {
+        if ($user !== null) {
+            AuditRepository::log($user['email'], 'auth.logout', 'Session ended.');
+        }
+
+        $_SESSION = [];
+        if (session_id() !== '') {
+            session_regenerate_id(true);
+        }
+    }
+}
+
