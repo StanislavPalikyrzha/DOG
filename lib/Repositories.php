@@ -48,3 +48,28 @@ final class TemplateRepository
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch();
         return $row ?: null;
+    }
+
+    public static function create(array $payload): int
+    {
+        $now = date('c');
+        $stmt = Database::pdo()->prepare(
+            'INSERT INTO templates (name, slug, category, description, template_html, template_css, created_at, updated_at)
+             VALUES (:name, :slug, :category, :description, :template_html, :template_css, :created_at, :updated_at)'
+        );
+        $stmt->execute([
+            ':name' => $payload['name'],
+            ':slug' => $payload['slug'],
+            ':category' => $payload['category'],
+            ':description' => $payload['description'],
+            ':template_html' => $payload['template_html'],
+            ':template_css' => $payload['template_css'],
+            ':created_at' => $now,
+            ':updated_at' => $now,
+        ]);
+
+        return (int) Database::pdo()->lastInsertId();
+    }
+}
+
+final class DocumentRepository
