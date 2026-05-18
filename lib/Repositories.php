@@ -73,3 +73,28 @@ final class TemplateRepository
 }
 
 final class DocumentRepository
+{
+    public static function create(array $payload): int
+    {
+        $now = date('c');
+        $stmt = Database::pdo()->prepare(
+            'INSERT INTO documents (title, template_id, status, source_type, data_json, html_output, pdf_path, created_by, created_at, updated_at)
+             VALUES (:title, :template_id, :status, :source_type, :data_json, :html_output, :pdf_path, :created_by, :created_at, :updated_at)'
+        );
+        $stmt->execute([
+            ':title' => $payload['title'],
+            ':template_id' => $payload['template_id'],
+            ':status' => $payload['status'],
+            ':source_type' => $payload['source_type'],
+            ':data_json' => json_encode($payload['data'], JSON_UNESCAPED_UNICODE),
+            ':html_output' => $payload['html_output'],
+            ':pdf_path' => $payload['pdf_path'],
+            ':created_by' => $payload['created_by'],
+            ':created_at' => $now,
+            ':updated_at' => $now,
+        ]);
+
+        return (int) Database::pdo()->lastInsertId();
+    }
+
+    public static function updatePdfPath(int $id, string $pdfPath): void
