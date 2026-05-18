@@ -98,3 +98,28 @@ final class DocumentRepository
     }
 
     public static function updatePdfPath(int $id, string $pdfPath): void
+    {
+        $stmt = Database::pdo()->prepare('UPDATE documents SET pdf_path = :pdf_path, updated_at = :updated_at WHERE id = :id');
+        $stmt->execute([
+            ':pdf_path' => $pdfPath,
+            ':updated_at' => date('c'),
+            ':id' => $id,
+        ]);
+    }
+
+    public static function listAll(): array
+    {
+        $sql = 'SELECT d.id, d.title, d.status, d.source_type, d.created_at, t.name AS template_name, u.display_name AS author
+                FROM documents d
+                JOIN templates t ON t.id = d.template_id
+                JOIN users u ON u.id = d.created_by
+                ORDER BY d.created_at DESC';
+        return Database::pdo()->query($sql)->fetchAll();
+    }
+
+    public static function findById(int $id): ?array
+    {
+        $stmt = Database::pdo()->prepare(
+            'SELECT d.*, t.name AS template_name, t.template_css, u.display_name AS author
+             FROM documents d
+             JOIN templates t ON t.id = d.template_id
