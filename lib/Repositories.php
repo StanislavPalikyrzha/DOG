@@ -148,3 +148,28 @@ final class DocumentRepository
     }
 
     public static function logImport(string $fileName, int $rowCount, string $status, string $notes, int $createdBy): void
+    {
+        $stmt = Database::pdo()->prepare(
+            'INSERT INTO import_jobs (file_name, row_count, status, notes, created_by, created_at)
+             VALUES (:file_name, :row_count, :status, :notes, :created_by, :created_at)'
+        );
+        $stmt->execute([
+            ':file_name' => $fileName,
+            ':row_count' => $rowCount,
+            ':status' => $status,
+            ':notes' => $notes,
+            ':created_by' => $createdBy,
+            ':created_at' => date('c'),
+        ]);
+    }
+
+    public static function listImports(): array
+    {
+        $sql = 'SELECT i.*, u.display_name AS author
+                FROM import_jobs i
+                JOIN users u ON u.id = i.created_by
+                ORDER BY i.created_at DESC';
+        return Database::pdo()->query($sql)->fetchAll();
+    }
+}
+
