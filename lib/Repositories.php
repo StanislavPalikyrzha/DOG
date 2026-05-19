@@ -173,3 +173,28 @@ final class DocumentRepository
     }
 }
 
+final class AuditRepository
+{
+    public static function log(string $actorEmail, string $action, string $details): void
+    {
+        $stmt = Database::pdo()->prepare(
+            'INSERT INTO audit_log (actor_email, action, details, created_at)
+             VALUES (:actor_email, :action, :details, :created_at)'
+        );
+        $stmt->execute([
+            ':actor_email' => $actorEmail,
+            ':action' => $action,
+            ':details' => $details,
+            ':created_at' => date('c'),
+        ]);
+    }
+
+    public static function recent(int $limit = 30): array
+    {
+        $stmt = Database::pdo()->prepare('SELECT * FROM audit_log ORDER BY created_at DESC LIMIT :limit');
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+}
+
