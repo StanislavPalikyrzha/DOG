@@ -123,3 +123,28 @@ final class DocumentRepository
             'SELECT d.*, t.name AS template_name, t.template_css, u.display_name AS author
              FROM documents d
              JOIN templates t ON t.id = d.template_id
+             JOIN users u ON u.id = d.created_by
+             WHERE d.id = :id'
+        );
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+        if ($row === false) {
+            return null;
+        }
+
+        $row['data'] = json_decode($row['data_json'], true) ?: [];
+        return $row;
+    }
+
+    public static function recentStats(): array
+    {
+        $pdo = Database::pdo();
+        return [
+            'templates' => (int) $pdo->query('SELECT COUNT(*) FROM templates')->fetchColumn(),
+            'documents' => (int) $pdo->query('SELECT COUNT(*) FROM documents')->fetchColumn(),
+            'imports' => (int) $pdo->query('SELECT COUNT(*) FROM import_jobs')->fetchColumn(),
+            'users' => (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn(),
+        ];
+    }
+
+    public static function logImport(string $fileName, int $rowCount, string $status, string $notes, int $createdBy): void
