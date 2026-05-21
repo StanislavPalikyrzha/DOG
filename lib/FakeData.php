@@ -24,3 +24,15 @@ final class FakeData
             default => [
                 'name' => 'Ana Popescu',
                 'role' => 'Junior web developer',
+                'summary' => 'Builds accessible interfaces and documents data flows for small academic projects.',
+                'email' => 'ana.popescu@example.com',
+                'phone' => '+40 721 555 120',
+                'city' => 'Iasi',
+                'skills' => 'HTML, CSS, PHP, SQLite, Fetch API',
+                'portfolio' => 'https://portfolio.example.test',
+            ],
+        };
+    }
+}
+
+
