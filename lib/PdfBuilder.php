@@ -49,3 +49,19 @@ final class PdfBuilder
         $pdf .= 'trailer << /Size ' . (count($objects) + 1) . " /Root 1 0 R >>\n";
         $pdf .= "startxref\n" . $xrefOffset . "\n%%EOF";
 
+        file_put_contents($path, $pdf);
+    }
+
+    private static function wrap(string $text, int $width): array
+    {
+        $chunks = wordwrap($text, $width, "\n", true);
+        return explode("\n", $chunks);
+    }
+
+    private static function escapeText(string $text): string
+    {
+        return str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $text);
+    }
+}
+
+
