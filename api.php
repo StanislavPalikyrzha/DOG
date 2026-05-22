@@ -44,3 +44,26 @@ if ($action === 'login' && $method === 'POST') {
 }
 
 if ($action === 'logout' && $method === 'POST') {
+    Auth::logout(current_user());
+    json_response(['ok' => true]);
+}
+
+if ($action === 'templates') {
+    require_user();
+    json_response(['ok' => true, 'templates' => TemplateRepository::listAll()]);
+}
+
+if ($action === 'template_create' && $method === 'POST') {
+    $user = require_admin();
+    $templateId = TemplateRepository::create([
+        'name' => trim((string) ($payload['name'] ?? 'Untitled template')),
+        'slug' => trim((string) ($payload['slug'] ?? ('template-' . random_int(100, 999)))),
+        'category' => trim((string) ($payload['category'] ?? 'Custom')),
+        'description' => trim((string) ($payload['description'] ?? 'Created from admin panel.')),
+        'template_html' => (string) ($payload['template_html'] ?? '<p>{{title}}</p>'),
+        'template_css' => (string) ($payload['template_css'] ?? ''),
+    ]);
+    AuditRepository::log($user['email'], 'template.create', 'Created template #' . $templateId);
+    json_response(['ok' => true, 'template_id' => $templateId]);
+}
+
