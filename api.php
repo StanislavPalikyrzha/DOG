@@ -21,3 +21,26 @@ if ($action === 'bootstrap') {
         'templates' => TemplateRepository::listAll(),
         'documents' => DocumentRepository::listAll(),
         'imports' => DocumentRepository::listImports(),
+    ]);
+}
+
+if ($action === 'login' && $method === 'POST') {
+    $email = trim((string) ($payload['email'] ?? ''));
+    $password = (string) ($payload['password'] ?? '');
+    $user = Auth::attemptLogin($email, $password);
+    if ($user === null) {
+        json_response(['ok' => false, 'error' => 'Invalid email or password.'], 422);
+    }
+
+    json_response([
+        'ok' => true,
+        'user' => [
+            'id' => (int) $user['id'],
+            'display_name' => $user['display_name'],
+            'email' => $user['email'],
+            'role' => $user['role'],
+        ],
+    ]);
+}
+
+if ($action === 'logout' && $method === 'POST') {
