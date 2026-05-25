@@ -112,3 +112,26 @@ if ($action === 'generate' && $method === 'POST') {
         foreach ($rows as $index => $row) {
             $values = str_getcsv($row, ',', '"', '\\');
             $data = [];
+            foreach ($headers as $offset => $header) {
+                $data[trim((string) $header)] = trim((string) ($values[$offset] ?? ''));
+            }
+            $title = trim((string) ($data['title'] ?? $data['name'] ?? ($template['name'] . ' row ' . ($index + 1))));
+            $created[] = $buildDocument($data, $title, 'csv');
+        }
+        DocumentRepository::logImport((string) ($payload['file_name'] ?? 'inline.csv'), count($created), 'done', 'CSV import generated documents.', (int) $user['id']);
+    } elseif ($mode === 'random') {
+        $data = FakeData::forTemplate($template['slug']);
+        $created[] = $buildDocument($data, trim((string) ($payload['title'] ?? ($template['name'] . ' demo'))), 'random');
+    } else {
+        $data = $payload['data'] ?? [];
+        if (!is_array($data)) {
+            json_response(['ok' => false, 'error' => 'Manual payload must be a JSON object.'], 422);
+        }
+        $created[] = $buildDocument($data, trim((string) ($payload['title'] ?? 'Manual document')), 'json');
+    }
+
+    $primary = $created[0] ?? null;
+    json_response([
+        'ok' => true,
+        'created_count' => count($created),
+        'documents' => $created,
