@@ -67,3 +67,26 @@ if ($action === 'template_create' && $method === 'POST') {
     json_response(['ok' => true, 'template_id' => $templateId]);
 }
 
+if ($action === 'generate' && $method === 'POST') {
+    $user = require_editor();
+    $template = TemplateRepository::findById((int) ($payload['template_id'] ?? 0));
+    if ($template === null) {
+        json_response(['ok' => false, 'error' => 'Template not found.'], 404);
+    }
+
+    $mode = (string) ($payload['mode'] ?? 'manual');
+    $created = [];
+
+    $buildDocument = static function (array $data, string $title, string $sourceType) use ($template, $user): array {
+        $body = TemplateEngine::render($template['template_html'], $data);
+        $html = TemplateEngine::wrapDocument($title, $template['template_css'], $body);
+
+        $documentId = DocumentRepository::create([
+            'title' => $title,
+            'template_id' => (int) $template['id'],
+            'status' => 'generated',
+            'source_type' => $sourceType,
+            'data' => $data,
+            'html_output' => preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $html) ?? $html,
+            'pdf_path' => '',
+            'created_by' => (int) $user['id'],
