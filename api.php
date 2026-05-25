@@ -135,3 +135,26 @@ if ($action === 'generate' && $method === 'POST') {
         'ok' => true,
         'created_count' => count($created),
         'documents' => $created,
+        'preview_html' => $primary['html_output'] ?? '',
+        'links' => $primary ? document_links((int) $primary['id']) : null,
+    ]);
+}
+
+if ($action === 'documents') {
+    require_user();
+    json_response(['ok' => true, 'documents' => DocumentRepository::listAll()]);
+}
+
+if ($action === 'document') {
+    require_user();
+    $document = DocumentRepository::findById((int) ($_GET['id'] ?? 0));
+    if ($document === null) {
+        json_response(['ok' => false, 'error' => 'Document not found.'], 404);
+    }
+    json_response(['ok' => true, 'document' => $document, 'links' => document_links((int) $document['id'])]);
+}
+
+if ($action === 'download_html') {
+    require_user();
+    $document = DocumentRepository::findById((int) ($_GET['id'] ?? 0));
+    if ($document === null) {
