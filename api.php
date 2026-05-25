@@ -90,3 +90,25 @@ if ($action === 'generate' && $method === 'POST') {
             'html_output' => preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $html) ?? $html,
             'pdf_path' => '',
             'created_by' => (int) $user['id'],
+        ]);
+
+        $pdfPath = EXPORTS_DIR . '/document-' . $documentId . '.pdf';
+        PdfBuilder::build($title, $html, $pdfPath);
+        DocumentRepository::updatePdfPath($documentId, basename($pdfPath));
+
+        $document = DocumentRepository::findById($documentId);
+        AuditRepository::log($user['email'], 'document.generate', 'Generated document #' . $documentId . ' from template ' . $template['slug']);
+        return $document ?? [];
+    };
+
+    if ($mode === 'csv') {
+        $csv = trim((string) ($payload['csv'] ?? ''));
+        $rows = array_values(array_filter(preg_split('/\R/', $csv) ?: [], static fn(string $line): bool => trim($line) !== ''));
+        if (count($rows) < 2) {
+            json_response(['ok' => false, 'error' => 'CSV must contain a header and at least one row.'], 422);
+        }
+
+        $headers = str_getcsv((string) array_shift($rows), ',', '"', '\\');
+        foreach ($rows as $index => $row) {
+            $values = str_getcsv($row, ',', '"', '\\');
+            $data = [];
