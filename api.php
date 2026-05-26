@@ -158,3 +158,26 @@ if ($action === 'download_html') {
     require_user();
     $document = DocumentRepository::findById((int) ($_GET['id'] ?? 0));
     if ($document === null) {
+        http_response_code(404);
+        exit('Document not found.');
+    }
+    header('Content-Type: text/html; charset=utf-8');
+    echo html_page($document['title'], $document['html_output']);
+    exit;
+}
+
+if ($action === 'download_json') {
+    require_user();
+    $document = DocumentRepository::findById((int) ($_GET['id'] ?? 0));
+    if ($document === null) {
+        http_response_code(404);
+        exit('Document not found.');
+    }
+    header('Content-Type: application/json; charset=utf-8');
+    header('Content-Disposition: inline; filename="document-' . $document['id'] . '.json"');
+    echo json_encode([
+        'id' => (int) $document['id'],
+        'title' => $document['title'],
+        'template' => $document['template_name'],
+        'status' => $document['status'],
+        'source_type' => $document['source_type'],
