@@ -204,3 +204,25 @@ if ($action === 'download_pdf') {
     header('Content-Type: application/pdf');
     header('Content-Disposition: inline; filename="' . basename($path) . '"');
     readfile($path);
+    exit;
+}
+
+if ($action === 'users') {
+    require_admin();
+    json_response([
+        'ok' => true,
+        'users' => UserRepository::listAll(),
+        'audit' => AuditRepository::recent(),
+        'imports' => DocumentRepository::listImports(),
+    ]);
+}
+
+if ($action === 'user_role' && $method === 'POST') {
+    $user = require_admin();
+    UserRepository::updateRole((int) ($payload['id'] ?? 0), (string) ($payload['role'] ?? 'viewer'));
+    AuditRepository::log($user['email'], 'user.role.update', 'Updated role for user #' . (int) ($payload['id'] ?? 0));
+    json_response(['ok' => true]);
+}
+
+json_response(['ok' => false, 'error' => 'Unknown action.'], 404);
+
