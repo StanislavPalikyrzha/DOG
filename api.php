@@ -181,3 +181,26 @@ if ($action === 'download_json') {
         'template' => $document['template_name'],
         'status' => $document['status'],
         'source_type' => $document['source_type'],
+        'data' => $document['data'],
+        'created_at' => $document['created_at'],
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if ($action === 'download_pdf') {
+    require_user();
+    $document = DocumentRepository::findById((int) ($_GET['id'] ?? 0));
+    if ($document === null) {
+        http_response_code(404);
+        exit('Document not found.');
+    }
+
+    $path = EXPORTS_DIR . '/' . $document['pdf_path'];
+    if (!is_file($path)) {
+        http_response_code(404);
+        exit('PDF not found.');
+    }
+
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: inline; filename="' . basename($path) . '"');
+    readfile($path);
