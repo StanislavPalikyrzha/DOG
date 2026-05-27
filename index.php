@@ -114,3 +114,32 @@ require_once __DIR__ . '/bootstrap.php';
   "role": "Frontend intern",
   "summary": "Builds accessible interfaces and documents integration flows.",
   "email": "maria.ionescu@example.com",
+  "phone": "+40 745 101 101",
+  "city": "Iasi",
+  "skills": "HTML, CSS, Fetch API, PHP basics",
+  "portfolio": "https://example.test/maria"
+}</textarea>
+            </label>
+            <label class="full-width hidden" id="csv-field">
+              <span>CSV source</span>
+              <textarea name="csv_payload" id="csv-payload" placeholder="name,role,email"></textarea>
+            </label>
+            <label class="full-width hidden" id="csv-upload-field">
+              <span>CSV file upload</span>
+              <input type="file" id="csv-file" accept=".csv,text/csv">
+            </label>
+            <button type="submit" class="button primary">Generate</button>
+          </form>
+          <p class="feedback" id="generate-feedback"></p>
+        </section>
+
+        <section class="panel" id="preview">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">Result</p>
+              <h3>Latest preview</h3>
+            </div>
+            <div class="link-row">
+              <a class="button secondary disabled" id="open-json-link" href="#">Open JSON</a>
+              <a class="button secondary disabled" id="open-html-link" href="#">Open HTML</a>
+              <a class="button secondary disabled" id="open-pdf-link" href="#">Open PDF</a>
