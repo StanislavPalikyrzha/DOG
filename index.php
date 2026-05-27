@@ -85,3 +85,32 @@ require_once __DIR__ . '/bootstrap.php';
               <h3>Generate a document</h3>
             </div>
             <div class="tag-row">
+              <span class="tag">HTML</span>
+              <span class="tag">PDF</span>
+              <span class="tag">CSV / JSON</span>
+            </div>
+          </div>
+          <form id="generate-form" class="form-grid">
+            <label>
+              <span>Title</span>
+              <input type="text" name="title" value="Demo document" required>
+            </label>
+            <label>
+              <span>Template</span>
+              <select name="template_id" id="template-select"></select>
+            </label>
+            <label>
+              <span>Mode</span>
+              <select name="mode" id="mode-select">
+                <option value="manual">Manual JSON</option>
+                <option value="random">Random realistic data</option>
+                <option value="csv">CSV import</option>
+              </select>
+            </label>
+            <label class="full-width">
+              <span>JSON payload</span>
+              <textarea name="json_payload" id="json-payload">{
+  "name": "Maria Ionescu",
+  "role": "Frontend intern",
+  "summary": "Builds accessible interfaces and documents integration flows.",
+  "email": "maria.ionescu@example.com",
