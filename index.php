@@ -56,3 +56,32 @@ require_once __DIR__ . '/bootstrap.php';
           <label>
             <span>Email</span>
             <input type="email" name="email" value="editor@dog.local" required>
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" name="password" value="editor123" required>
+          </label>
+          <button type="submit" class="button primary">Sign in</button>
+        </form>
+        <p class="feedback" id="login-feedback"></p>
+      </section>
+
+      <section class="panel hidden" id="dashboard">
+        <div class="panel-header">
+          <div>
+            <p class="panel-kicker">Overview</p>
+            <h3>Dashboard</h3>
+          </div>
+          <div class="session-chip" id="session-chip"></div>
+        </div>
+        <div class="stats-grid" id="stats-grid"></div>
+      </section>
+
+      <section class="two-column hidden">
+        <section class="panel" id="generator">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">Core feature</p>
+              <h3>Generate a document</h3>
+            </div>
+            <div class="tag-row">
