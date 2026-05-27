@@ -27,3 +27,32 @@ require_once __DIR__ . '/bootstrap.php';
         <h2>Demo accounts</h2>
         <p><code>admin@dog.local / admin123</code></p>
         <p><code>editor@dog.local / editor123</code></p>
+        <p><code>viewer@dog.local / viewer123</code></p>
+      </section>
+    </aside>
+
+    <main class="main-content">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Tehnologii Web project</p>
+          <h2>Generate HTML and PDF documents from reusable templates</h2>
+          <p class="muted">The application uses a PHP backend, SQLite persistence, asynchronous fetch requests and open formats such as CSV and JSON.</p>
+        </div>
+        <div class="hero-actions">
+          <button type="button" class="button secondary" id="logout-button" hidden>Logout</button>
+          <a class="button secondary" href="docs/scholarly.html">Scholarly HTML</a>
+          <a class="button secondary" href="docs/architecture.html">Architecture</a>
+        </div>
+      </header>
+
+      <section class="panel" id="login-panel">
+        <div class="panel-header">
+          <div>
+            <p class="panel-kicker">Authentication</p>
+            <h3>Login</h3>
+          </div>
+        </div>
+        <form id="login-form" class="form-grid">
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" value="editor@dog.local" required>
