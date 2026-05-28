@@ -143,3 +143,32 @@ require_once __DIR__ . '/bootstrap.php';
               <a class="button secondary disabled" id="open-json-link" href="#">Open JSON</a>
               <a class="button secondary disabled" id="open-html-link" href="#">Open HTML</a>
               <a class="button secondary disabled" id="open-pdf-link" href="#">Open PDF</a>
+            </div>
+          </div>
+          <div class="preview-frame" id="preview-frame">
+            <p class="placeholder">Generate a document to see the server-rendered preview.</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="panel hidden" id="documents">
+        <div class="panel-header">
+          <div>
+            <p class="panel-kicker">Storage</p>
+            <h3>Generated documents</h3>
+          </div>
+        </div>
+        <div id="documents-list" class="card-list"></div>
+      </section>
+
+      <section class="panel hidden" id="admin">
+        <div class="panel-header">
+          <div>
+            <p class="panel-kicker">Administration</p>
+            <h3>Users, templates and audit log</h3>
+          </div>
+          <span class="tag">Admin only</span>
+        </div>
+
+        <div class="admin-grid">
+          <div>
