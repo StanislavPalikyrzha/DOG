@@ -201,3 +201,31 @@ require_once __DIR__ . '/bootstrap.php';
           </div>
         </div>
       </section>
+
+      <section class="panel" id="resources">
+        <div class="panel-header">
+          <div>
+            <p class="panel-kicker">Deliverables</p>
+            <h3>Project resources</h3>
+          </div>
+        </div>
+        <div class="resource-grid">
+          <a href="docs/scholarly.html">Scholarly HTML report</a>
+          <a href="docs/architecture.html">Architecture and C4 view</a>
+          <a href="docs/design-notes.html">Design notes and wireframe</a>
+          <a href="docs/data-provenance.html">Data model and provenance</a>
+          <a href="docs/progress.html">Development progress</a>
+          <a href="docs/development-log.html">Development log</a>
+          <a href="docs/dog-demo-video.webm">Demo video (UHD walkthrough)</a>
+          <a href="samples/cv_data.csv">CSV sample: CV</a>
+          <a href="samples/invoice_data.csv">CSV sample: invoice</a>
+          <a href="LICENSE">License</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
+
