@@ -172,3 +172,32 @@ require_once __DIR__ . '/bootstrap.php';
 
         <div class="admin-grid">
           <div>
+            <h4>Users</h4>
+            <div id="users-table"></div>
+          </div>
+          <div>
+            <h4>Create template</h4>
+            <form id="template-form" class="form-grid compact">
+              <label><span>Name</span><input type="text" name="name" value="Memo note"></label>
+              <label><span>Slug</span><input type="text" name="slug" value="memo-note"></label>
+              <label><span>Category</span><input type="text" name="category" value="Office"></label>
+              <label class="full-width"><span>Description</span><input type="text" name="description" value="Short internal memo template"></label>
+              <label class="full-width"><span>Template HTML</span><textarea name="template_html"><h2>{{title}}</h2><p>{{message}}</p><small>{{today}}</small></textarea></label>
+              <label class="full-width"><span>Template CSS</span><textarea name="template_css">h2{color:#6e4f32}</textarea></label>
+              <button type="submit" class="button primary">Save template</button>
+            </form>
+            <p class="feedback" id="template-feedback"></p>
+          </div>
+        </div>
+
+        <div class="admin-grid">
+          <div>
+            <h4>Recent imports</h4>
+            <div id="imports-list" class="simple-list"></div>
+          </div>
+          <div>
+            <h4>Audit log</h4>
+            <div id="audit-list" class="simple-list"></div>
+          </div>
+        </div>
+      </section>
