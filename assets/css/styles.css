@@ -1,0 +1,42 @@
+:root {
+  --bg: #f3efe7;
+  --paper: #fffdf8;
+  --line: #d7cdc0;
+  --line-strong: #baa992;
+  --text: #2a221b;
+  --muted: #6d6256;
+  --accent: #7b5c3f;
+  --accent-soft: #eee3d2;
+  --shadow: 0 18px 50px rgba(78, 65, 48, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(rgba(108, 94, 80, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(108, 94, 80, 0.08) 1px, transparent 1px),
+    var(--bg);
+  background-size: 32px 32px, 32px 32px, auto;
+  color: var(--text);
+  font-family: Georgia, serif;
+}
+
+.page-shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  padding: 28px 24px;
+  border-right: 1px solid rgba(42, 34, 27, 0.12);
+  background: rgba(255, 253, 248, 0.8);
+  backdrop-filter: blur(6px);
+}
+
+.sidebar h1 {
+  margin: 0 0 0.6rem;
