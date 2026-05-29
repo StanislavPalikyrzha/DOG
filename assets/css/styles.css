@@ -163,3 +163,44 @@ select,
 textarea {
   width: 100%;
   border: 1px solid var(--line-strong);
+  background: #fff;
+  padding: 0.78rem 0.88rem;
+}
+
+textarea {
+  min-height: 170px;
+  resize: vertical;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line-strong);
+  padding: 0.82rem 1rem;
+  background: #fff;
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.button.secondary,
+.tag {
+  background: var(--accent-soft);
+}
+
+.button.disabled {
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
