@@ -40,3 +40,44 @@ body {
 
 .sidebar h1 {
   margin: 0 0 0.6rem;
+  font-size: 2.1rem;
+}
+
+.sidebar p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.nav-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1.3rem 0 1.5rem;
+}
+
+.nav-list a,
+.resource-grid a {
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid rgba(42, 34, 27, 0.18);
+  background: var(--paper);
+  padding: 0.8rem 0.9rem;
+}
+
+.tip-box {
+  border: 1px dashed var(--line-strong);
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.tip-box h2,
+.panel h3,
+.panel h4 {
+  margin-top: 0;
+}
+
+.main-content {
+  padding: 32px;
+  display: grid;
+  gap: 24px;
+}
