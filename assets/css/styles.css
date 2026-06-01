@@ -204,3 +204,44 @@ textarea {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+}
+
+.stat-card {
+  border: 1px solid var(--line);
+  padding: 1rem;
+  background: #fff;
+}
+
+.stat-card strong {
+  display: block;
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+}
+
+.preview-frame {
+  min-height: 420px;
+  padding: 1rem;
+  background: #fff;
+  border: 1px dashed var(--line-strong);
+  overflow: auto;
+}
+
+.placeholder {
+  color: var(--muted);
+}
+
+.card-list,
+.simple-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.document-card,
+.simple-list article {
+  background: #fff;
