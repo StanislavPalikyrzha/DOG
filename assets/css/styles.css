@@ -245,3 +245,44 @@ textarea {
 .document-card,
 .simple-list article {
   background: #fff;
+  border: 1px solid var(--line);
+  padding: 1rem;
+}
+
+.document-card h4,
+.simple-list h5 {
+  margin: 0 0 0.3rem;
+}
+
+.document-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  color: var(--muted);
+  margin-bottom: 0.8rem;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 1.25rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  padding: 0.7rem;
+  vertical-align: top;
+}
+
+.session-chip,
+.tag {
+  border: 1px solid var(--line-strong);
