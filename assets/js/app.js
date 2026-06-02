@@ -31,3 +31,35 @@ function setFeedback(id, message, isError = false) {
 }
 
 function toggleAppSections(showApp) {
+  ['dashboard', 'documents', 'admin'].forEach((id) => byId(id).classList.toggle('hidden', !showApp));
+  const canGenerate = Boolean(state.user && ['admin', 'editor'].includes(state.user.role));
+  document.querySelector('.two-column').classList.toggle('hidden', !showApp || !canGenerate);
+  byId('logout-button').hidden = !showApp;
+  byId('login-panel').classList.toggle('hidden', showApp);
+}
+
+function renderStats(stats) {
+  byId('stats-grid').innerHTML = `
+    <article class="stat-card"><strong>${stats.templates}</strong><span>Templates</span></article>
+    <article class="stat-card"><strong>${stats.documents}</strong><span>Generated documents</span></article>
+    <article class="stat-card"><strong>${stats.imports}</strong><span>Import jobs</span></article>
+    <article class="stat-card"><strong>${stats.users}</strong><span>Registered users</span></article>
+  `;
+}
+
+function renderTemplates(templates) {
+  state.templates = templates;
+  const select = byId('template-select');
+  select.innerHTML = templates.map((template) => `<option value="${template.id}">${template.name} (${template.category})</option>`).join('');
+}
+
+function renderDocuments(documents) {
+  state.documents = documents;
+  const list = byId('documents-list');
+  if (!documents.length) {
+    list.innerHTML = '<p class="placeholder">No generated documents yet.</p>';
+    return;
+  }
+
+  list.innerHTML = documents.map((doc) => `
+    <article class="document-card">
