@@ -95,3 +95,36 @@ function renderAdmin(users = [], audit = [], imports = []) {
         ${users.map((user) => `
           <tr>
             <td>${user.display_name}</td>
+            <td>${user.email}</td>
+            <td>
+              <select data-user-role="${user.id}">
+                ${['admin', 'editor', 'viewer'].map((role) => `<option value="${role}" ${role === user.role ? 'selected' : ''}>${role}</option>`).join('')}
+              </select>
+            </td>
+            <td><button type="button" class="button secondary" data-save-user="${user.id}">Save</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+
+  byId('audit-list').innerHTML = audit.map((entry) => `
+    <article>
+      <h5>${entry.action}</h5>
+      <p>${entry.actor_email}</p>
+      <small>${new Date(entry.created_at).toLocaleString()} - ${entry.details}</small>
+    </article>
+  `).join('') || '<p class="placeholder">No audit entries yet.</p>';
+
+  byId('imports-list').innerHTML = imports.map((item) => `
+    <article>
+      <h5>${item.file_name}</h5>
+      <p>${item.row_count} rows, status: ${item.status}</p>
+      <small>${new Date(item.created_at).toLocaleString()} - ${item.notes}</small>
+    </article>
+  `).join('') || '<p class="placeholder">No imports yet.</p>';
+
+  document.querySelectorAll('[data-save-user]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const userId = button.getAttribute('data-save-user');
+      const role = document.querySelector(`[data-user-role="${userId}"]`).value;
