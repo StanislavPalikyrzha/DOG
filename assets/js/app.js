@@ -63,3 +63,35 @@ function renderDocuments(documents) {
 
   list.innerHTML = documents.map((doc) => `
     <article class="document-card">
+      <h4>${doc.title}</h4>
+      <div class="document-meta">
+        <span>Template: ${doc.template_name}</span>
+        <span>Source: ${doc.source_type}</span>
+        <span>Author: ${doc.author}</span>
+        <span>${new Date(doc.created_at).toLocaleString()}</span>
+      </div>
+      <div class="link-row">
+        <a class="button secondary" href="api.php?action=download_json&id=${doc.id}" target="_blank" rel="noreferrer">Open JSON</a>
+        <a class="button secondary" href="api.php?action=download_html&id=${doc.id}" target="_blank" rel="noreferrer">Open HTML</a>
+        <a class="button secondary" href="api.php?action=download_pdf&id=${doc.id}" target="_blank" rel="noreferrer">Open PDF</a>
+      </div>
+    </article>
+  `).join('');
+}
+
+function renderAdmin(users = [], audit = [], imports = []) {
+  const adminPanel = byId('admin');
+  if (!state.user || state.user.role !== 'admin') {
+    adminPanel.classList.add('hidden');
+    return;
+  }
+
+  adminPanel.classList.remove('hidden');
+
+  byId('users-table').innerHTML = `
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead>
+      <tbody>
+        ${users.map((user) => `
+          <tr>
+            <td>${user.display_name}</td>
