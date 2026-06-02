@@ -128,3 +128,35 @@ function renderAdmin(users = [], audit = [], imports = []) {
     button.addEventListener('click', async () => {
       const userId = button.getAttribute('data-save-user');
       const role = document.querySelector(`[data-user-role="${userId}"]`).value;
+      await api('user_role', {
+        method: 'POST',
+        body: JSON.stringify({ id: Number(userId), role }),
+      });
+      await loadAdmin();
+    });
+  });
+}
+
+function setPreview(html, links) {
+  const frame = byId('preview-frame');
+  frame.innerHTML = html || '<p class="placeholder">No preview available.</p>';
+  const jsonLink = byId('open-json-link');
+  const htmlLink = byId('open-html-link');
+  const pdfLink = byId('open-pdf-link');
+
+  if (links) {
+    jsonLink.href = links.json;
+    htmlLink.href = links.html;
+    pdfLink.href = links.pdf;
+    jsonLink.classList.remove('disabled');
+    htmlLink.classList.remove('disabled');
+    pdfLink.classList.remove('disabled');
+  } else {
+    jsonLink.href = '#';
+    htmlLink.href = '#';
+    pdfLink.href = '#';
+    jsonLink.classList.add('disabled');
+    htmlLink.classList.add('disabled');
+    pdfLink.classList.add('disabled');
+  }
+}
