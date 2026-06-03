@@ -257,3 +257,35 @@ function handleModeChange() {
   const mode = byId('mode-select').value;
   byId('csv-field').classList.toggle('hidden', mode !== 'csv');
   byId('csv-upload-field').classList.toggle('hidden', mode !== 'csv');
+}
+
+function handleCsvUpload(event) {
+  const file = event.target.files?.[0];
+  if (!file) {
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    byId('csv-payload').value = String(reader.result || '');
+  };
+  reader.readAsText(file);
+}
+
+async function handleLogout() {
+  await api('logout', { method: 'POST', body: JSON.stringify({}) });
+  state.user = null;
+  setPreview('', null);
+  await refreshBootstrap();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  byId('login-form').addEventListener('submit', handleLogin);
+  byId('generate-form').addEventListener('submit', handleGenerate);
+  byId('template-form').addEventListener('submit', handleTemplateCreate);
+  byId('mode-select').addEventListener('change', handleModeChange);
+  byId('csv-file').addEventListener('change', handleCsvUpload);
+  byId('logout-button').addEventListener('click', handleLogout);
+  handleModeChange();
+  await refreshBootstrap();
+});
+
