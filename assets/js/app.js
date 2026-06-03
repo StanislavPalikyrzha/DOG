@@ -225,3 +225,35 @@ async function handleGenerate(event) {
   };
 
   try {
+    const response = await api('generate', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    setPreview(response.preview_html, response.links);
+    setFeedback('generate-feedback', `Generated ${response.created_count} document(s).`);
+    await refreshBootstrap();
+  } catch (error) {
+    setFeedback('generate-feedback', error.message, true);
+  }
+}
+
+async function handleTemplateCreate(event) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  try {
+    const payload = Object.fromEntries(formData.entries());
+    await api('template_create', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    setFeedback('template-feedback', 'Template saved successfully.');
+    await refreshBootstrap();
+  } catch (error) {
+    setFeedback('template-feedback', error.message, true);
+  }
+}
+
+function handleModeChange() {
+  const mode = byId('mode-select').value;
+  byId('csv-field').classList.toggle('hidden', mode !== 'csv');
+  byId('csv-upload-field').classList.toggle('hidden', mode !== 'csv');
