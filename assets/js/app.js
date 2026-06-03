@@ -160,3 +160,35 @@ function setPreview(html, links) {
     pdfLink.classList.add('disabled');
   }
 }
+
+async function refreshBootstrap() {
+  const data = await api('bootstrap');
+  state.user = data.user;
+  renderStats(data.stats);
+  renderTemplates(data.templates);
+  renderDocuments(data.documents);
+  if (state.user) {
+    byId('session-chip').textContent = `${state.user.display_name} (${state.user.role})`;
+  }
+  toggleAppSections(Boolean(state.user));
+  if (state.user && state.user.role === 'admin') {
+    await loadAdmin();
+  }
+}
+
+async function loadAdmin() {
+  const data = await api('users');
+  renderAdmin(data.users, data.audit, data.imports);
+}
+
+async function handleLogin(event) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  try {
+    const data = await api('login', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: formData.get('email'),
+        password: formData.get('password'),
+      }),
+    });
