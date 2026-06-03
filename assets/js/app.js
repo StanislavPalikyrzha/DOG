@@ -192,3 +192,36 @@ async function handleLogin(event) {
         password: formData.get('password'),
       }),
     });
+    state.user = data.user;
+    setFeedback('login-feedback', `Logged in as ${data.user.display_name}.`);
+    await refreshBootstrap();
+  } catch (error) {
+    setFeedback('login-feedback', error.message, true);
+  }
+}
+
+async function handleGenerate(event) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  const mode = formData.get('mode');
+  let data = {};
+
+  if (mode === 'manual') {
+    try {
+      data = JSON.parse(String(formData.get('json_payload') || '{}'));
+    } catch (error) {
+      setFeedback('generate-feedback', 'JSON payload is invalid.', true);
+      return;
+    }
+  }
+
+  const payload = {
+    title: formData.get('title'),
+    template_id: Number(formData.get('template_id')),
+    mode,
+    data,
+    csv: formData.get('csv_payload'),
+    file_name: byId('csv-file').files[0]?.name || 'inline.csv',
+  };
+
+  try {
