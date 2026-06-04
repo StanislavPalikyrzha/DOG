@@ -1,0 +1,4 @@
+number,client,supplier,service,amount,notes
+inv-1001,Studio Prisma,DoG Web Lab,Template integration,1800 RON,Delivery in 5 business days
+inv-1002,NorthBridge SRL,DoG Web Lab,CSV import workflow,2300 RON,Includes PDF export
+
