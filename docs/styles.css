@@ -1,0 +1,49 @@
+body {
+  margin: 0;
+  font-family: Georgia, serif;
+  color: #241d17;
+  background: #f4efe6;
+}
+
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+header,
+section,
+figure {
+  background: #fffdf8;
+  border: 1px solid #d7cdc0;
+  padding: 1.5rem;
+  margin-bottom: 1.2rem;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+}
+
+small,
+.muted {
+  color: #6d6256;
+}
+
+figure figcaption {
+  margin-top: 1rem;
+  color: #6d6256;
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.diagram,
+.wireframe {
+  border: 1px solid #c7b9a2;
+  background: #fff;
+  padding: 1rem;
