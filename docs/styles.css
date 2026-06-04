@@ -47,3 +47,51 @@ figure figcaption {
   border: 1px solid #c7b9a2;
   background: #fff;
   padding: 1rem;
+}
+
+.diagram-flow {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.diagram-box {
+  border: 1px solid #8c775e;
+  padding: 0.9rem;
+}
+
+.wireframe-grid {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 1rem;
+}
+
+.wireframe-grid aside,
+.wireframe-grid section,
+.wireframe-card,
+.wireframe-header,
+.wireframe-footer {
+  border: 2px solid #7b6b58;
+  min-height: 70px;
+  padding: 0.8rem;
+}
+
+.wireframe-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+code {
+  background: #f0e9de;
+  padding: 0.1rem 0.3rem;
+}
+
+@media (max-width: 800px) {
+  .grid-two,
+  .wireframe-grid,
+  .wireframe-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+
