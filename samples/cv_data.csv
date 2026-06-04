@@ -1,0 +1,4 @@
+name,role,summary,email,phone,city,skills,portfolio
+Ioana Pavel,Junior PHP Developer,Builds document flows for academic tools,ioana.pavel@example.com,+40 740 100 100,Iasi,"PHP, HTML, CSS, SQLite",https://portfolio.example.test/ioana
+Victor Sandu,Frontend Student Assistant,Maintains responsive dashboards and reports,victor.sandu@example.com,+40 742 222 221,Cluj,"HTML, CSS, Fetch API",https://portfolio.example.test/victor
+
