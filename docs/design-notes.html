@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DoG - Design notes</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <header>
+    <small>UI design rationale</small>
+    <h1>Design notes</h1>
+    <p>The interface avoids framework-generated dashboard patterns and instead uses a calmer academic workspace aesthetic: grid-paper background, serif typography, bordered panels and direct visual grouping of tasks.</p>
+  </header>
+
+  <section>
+    <h2>Motivations</h2>
+    <ul>
+      <li>Keep the application understandable for a course project built without frontend frameworks.</li>
+      <li>Separate login, generation, storage and admin flows into explicit panels.</li>
+      <li>Preserve readability for longer template previews and form-heavy interactions.</li>
+    </ul>
+  </section>
+
+  <figure>
+    <div class="wireframe">
+      <div class="wireframe-grid">
+        <aside>
+          <strong>Sidebar</strong>
+          <p>navigation, demo accounts, resources</p>
+        </aside>
+        <div>
+          <div class="wireframe-header"><strong>Header</strong><br>project title, resource buttons, logout</div>
+          <div class="wireframe-cards">
+            <div class="wireframe-card">stats</div>
+            <div class="wireframe-card">templates</div>
+            <div class="wireframe-card">documents</div>
+          </div>
+          <section><strong>Generator + preview</strong><br>template chooser, JSON/CSV input, server-rendered preview</section>
+          <div class="wireframe-footer"><strong>Admin + resources</strong><br>user roles, template creation, documentation links</div>
+        </div>
+      </div>
+    </div>
+    <figcaption>Figure 1. Low-fidelity wireframe used to structure the responsive dashboard.</figcaption>
+  </figure>
+</main>
+</body>
+</html>
+
