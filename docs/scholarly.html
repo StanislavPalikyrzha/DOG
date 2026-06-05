@@ -24,3 +24,28 @@
       <li>Use SQLite for persistence and fetch-based AJAX for browser communication.</li>
     </ul>
   </section>
+
+  <section>
+    <h2>User interaction</h2>
+    <p>The application exposes a responsive interface with panels for login, dashboard metrics, document generation, preview, document storage and administration. All write operations use asynchronous calls to <code>api.php</code>. The user can choose a template, select an input mode, submit data and immediately preview the server-rendered result.</p>
+  </section>
+
+  <section>
+    <h2>System requirements</h2>
+    <ul>
+      <li>PHP 8 and PDO SQLite support.</li>
+      <li>Modern browser with Fetch API support.</li>
+      <li>No client-side or server-side frameworks.</li>
+      <li>Open formats for import/export: CSV, JSON, HTML and PDF.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Security and quality requirements</h2>
+    <p>Database writes use prepared statements, generated values are escaped on the server, script tags are stripped from rendered previews, and role checks protect privileged routes. The codebase is modularized into repositories, authentication, templating and export helpers.</p>
+  </section>
+</main>
+</body>
+</html>
+
+
