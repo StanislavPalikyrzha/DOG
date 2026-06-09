@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DoG - Data provenance</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <header>
+    <small>Data model and provenance</small>
+    <h1>Data sources</h1>
+    <p>The project uses open and controllable sources only: SQLite seed data, manual JSON payloads, CSV imports prepared by the team, and realistic random data generated server-side for demos.</p>
+  </header>
+
+  <section>
+    <h2>Persistent entities</h2>
+    <ul>
+      <li><strong>users</strong>: login credentials, display names and roles.</li>
+      <li><strong>templates</strong>: reusable HTML and CSS definitions for generated documents.</li>
+      <li><strong>documents</strong>: generated output, source data and export metadata.</li>
+      <li><strong>import_jobs</strong>: CSV import traceability.</li>
+      <li><strong>audit_log</strong>: actions relevant to administration and generation.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Provenance rules</h2>
+    <ul>
+      <li>Manual mode receives JSON objects entered in the browser.</li>
+      <li>CSV mode receives open-format comma-separated values.</li>
+      <li>Random mode uses a small in-project generator for realistic but synthetic examples.</li>
+      <li>No proprietary SDKs or framework wrappers are used.</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
+
