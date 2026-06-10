@@ -216,7 +216,7 @@ require_once __DIR__ . '/bootstrap.php';
           <a href="docs/data-provenance.html">Data model and provenance</a>
           <a href="docs/progress.html">Development progress</a>
           <a href="docs/development-log.html">Development log</a>
-          <a href="docs/dog-demo-video.webm">Demo video (UHD walkthrough)</a>
+          <a href="docs/dog-demo-video.mp4">Demo video (MP4 walkthrough)</a>
           <a href="samples/cv_data.csv">CSV sample: CV</a>
           <a href="samples/invoice_data.csv">CSV sample: invoice</a>
           <a href="LICENSE">License</a>
@@ -228,4 +228,3 @@ require_once __DIR__ . '/bootstrap.php';
   <script src="assets/js/app.js"></script>
 </body>
 </html>
-
