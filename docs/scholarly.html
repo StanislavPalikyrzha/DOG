@@ -17,7 +17,7 @@
   <section>
     <h2>Functional requirements</h2>
     <ul>
-      <li>Authenticate users and enforce role-based access.</li>
+      <li>Authenticate users with JWT and enforce role-based access.</li>
       <li>Generate documents from predefined templates using JSON, random data or CSV input.</li>
       <li>Store generated documents and expose HTML and PDF exports.</li>
       <li>Provide an administration module for users, templates and audit history.</li>
@@ -42,10 +42,8 @@
 
   <section>
     <h2>Security and quality requirements</h2>
-    <p>Database writes use prepared statements, generated values are escaped on the server, script tags are stripped from rendered previews, and role checks protect privileged routes. The codebase is modularized into repositories, authentication, templating and export helpers.</p>
+    <p>Authentication uses JWT tokens sent through the Authorization header, database writes use prepared statements, generated values are escaped on the server, script tags are stripped from rendered previews, and role checks protect privileged routes. The codebase is organized into simple helper files for database access, authentication, templating and export logic.</p>
   </section>
 </main>
 </body>
 </html>
-
-

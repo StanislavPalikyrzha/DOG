@@ -1,148 +1,209 @@
-const state = {
-  user: null,
-  templates: [],
-  documents: [],
-  imports: [],
-};
+var currentUser = null;
+var authToken = localStorage.getItem('dog_jwt') || '';
 
-const byId = (id) => document.getElementById(id);
+function byId(id) {
+  return document.getElementById(id);
+}
 
-async function api(action, options = {}) {
-  const response = await fetch(`api.php?action=${action}`, {
+async function api(action, options) {
+  var requestOptions = options || {};
+  var headers = { 'Content-Type': 'application/json' };
+
+  if (authToken) {
+    headers.Authorization = 'Bearer ' + authToken;
+  }
+
+  var response = await fetch('api.php?action=' + action, {
     credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
+    headers: headers,
+    method: requestOptions.method || 'GET',
+    body: requestOptions.body || null,
   });
+  var contentType = response.headers.get('content-type') || '';
+  var data = {};
 
-  const contentType = response.headers.get('content-type') || '';
-  const data = contentType.includes('application/json') ? await response.json() : {};
+  if (contentType.indexOf('application/json') !== -1) {
+    data = await response.json();
+  }
 
   if (!response.ok || data.ok === false) {
-    throw new Error(data.error || `Request failed for ${action}.`);
+    throw new Error(data.error || 'Request failed for ' + action + '.');
   }
 
   return data;
 }
 
-function setFeedback(id, message, isError = false) {
-  const node = byId(id);
+function setFeedback(id, message, isError) {
+  var node = byId(id);
   node.textContent = message;
   node.style.color = isError ? '#a13a2f' : '#6d6256';
 }
 
 function toggleAppSections(showApp) {
-  ['dashboard', 'documents', 'admin'].forEach((id) => byId(id).classList.toggle('hidden', !showApp));
-  const canGenerate = Boolean(state.user && ['admin', 'editor'].includes(state.user.role));
-  document.querySelector('.two-column').classList.toggle('hidden', !showApp || !canGenerate);
+  var dashboard = byId('dashboard');
+  var documents = byId('documents');
+  var admin = byId('admin');
+  var workArea = document.querySelector('.two-column');
+  var canGenerate = currentUser && (currentUser.role === 'admin' || currentUser.role === 'editor');
+
+  dashboard.classList.toggle('hidden', !showApp);
+  documents.classList.toggle('hidden', !showApp);
+  admin.classList.toggle('hidden', !showApp);
+  workArea.classList.toggle('hidden', !showApp || !canGenerate);
   byId('logout-button').hidden = !showApp;
   byId('login-panel').classList.toggle('hidden', showApp);
 }
 
 function renderStats(stats) {
-  byId('stats-grid').innerHTML = `
-    <article class="stat-card"><strong>${stats.templates}</strong><span>Templates</span></article>
-    <article class="stat-card"><strong>${stats.documents}</strong><span>Generated documents</span></article>
-    <article class="stat-card"><strong>${stats.imports}</strong><span>Import jobs</span></article>
-    <article class="stat-card"><strong>${stats.users}</strong><span>Registered users</span></article>
-  `;
+  var html = '';
+  html += '<article class="stat-card"><strong>' + stats.templates + '</strong><span>Templates</span></article>';
+  html += '<article class="stat-card"><strong>' + stats.documents + '</strong><span>Generated documents</span></article>';
+  html += '<article class="stat-card"><strong>' + stats.imports + '</strong><span>Import jobs</span></article>';
+  html += '<article class="stat-card"><strong>' + stats.users + '</strong><span>Registered users</span></article>';
+  byId('stats-grid').innerHTML = html;
 }
 
 function renderTemplates(templates) {
-  state.templates = templates;
-  const select = byId('template-select');
-  select.innerHTML = templates.map((template) => `<option value="${template.id}">${template.name} (${template.category})</option>`).join('');
+  var select = byId('template-select');
+  var html = '';
+  var i;
+
+  for (i = 0; i < templates.length; i += 1) {
+    html += '<option value="' + templates[i].id + '">' + templates[i].name + ' (' + templates[i].category + ')</option>';
+  }
+
+  select.innerHTML = html;
 }
 
 function renderDocuments(documents) {
-  state.documents = documents;
-  const list = byId('documents-list');
+  var list = byId('documents-list');
+  var html = '';
+  var i;
+  var doc;
+
   if (!documents.length) {
     list.innerHTML = '<p class="placeholder">No generated documents yet.</p>';
     return;
   }
 
-  list.innerHTML = documents.map((doc) => `
-    <article class="document-card">
-      <h4>${doc.title}</h4>
-      <div class="document-meta">
-        <span>Template: ${doc.template_name}</span>
-        <span>Source: ${doc.source_type}</span>
-        <span>Author: ${doc.author}</span>
-        <span>${new Date(doc.created_at).toLocaleString()}</span>
-      </div>
-      <div class="link-row">
-        <a class="button secondary" href="api.php?action=download_json&id=${doc.id}" target="_blank" rel="noreferrer">Open JSON</a>
-        <a class="button secondary" href="api.php?action=download_html&id=${doc.id}" target="_blank" rel="noreferrer">Open HTML</a>
-        <a class="button secondary" href="api.php?action=download_pdf&id=${doc.id}" target="_blank" rel="noreferrer">Open PDF</a>
-      </div>
-    </article>
-  `).join('');
+  for (i = 0; i < documents.length; i += 1) {
+    doc = documents[i];
+    html += '<article class="document-card">';
+    html += '<h4>' + doc.title + '</h4>';
+    html += '<div class="document-meta">';
+    html += '<span>Template: ' + doc.template_name + '</span>';
+    html += '<span>Source: ' + doc.source_type + '</span>';
+    html += '<span>Author: ' + doc.author + '</span>';
+    html += '<span>' + new Date(doc.created_at).toLocaleString() + '</span>';
+    html += '</div>';
+    html += '<div class="link-row">';
+    html += '<a class="button secondary" href="api.php?action=download_json&id=' + doc.id + '" target="_blank" rel="noreferrer">Open JSON</a>';
+    html += '<a class="button secondary" href="api.php?action=download_html&id=' + doc.id + '" target="_blank" rel="noreferrer">Open HTML</a>';
+    html += '<a class="button secondary" href="api.php?action=download_pdf&id=' + doc.id + '" target="_blank" rel="noreferrer">Open PDF</a>';
+    html += '</div>';
+    html += '</article>';
+  }
+
+  list.innerHTML = html;
 }
 
-function renderAdmin(users = [], audit = [], imports = []) {
-  const adminPanel = byId('admin');
-  if (!state.user || state.user.role !== 'admin') {
+function attachRoleButtons() {
+  var buttons = document.querySelectorAll('[data-save-user]');
+  var i;
+
+  for (i = 0; i < buttons.length; i += 1) {
+    buttons[i].addEventListener('click', async function () {
+      var userId = this.getAttribute('data-save-user');
+      var roleField = document.querySelector('[data-user-role="' + userId + '"]');
+
+      await api('user_role', {
+        method: 'POST',
+        body: JSON.stringify({
+          id: Number(userId),
+          role: roleField.value,
+        }),
+      });
+
+      await loadAdmin();
+    });
+  }
+}
+
+function renderAdmin(users, audit, imports) {
+  var adminPanel = byId('admin');
+  var roles = ['admin', 'editor', 'viewer'];
+  var userHtml = '';
+  var auditHtml = '';
+  var importHtml = '';
+  var i;
+  var j;
+
+  if (!currentUser || currentUser.role !== 'admin') {
     adminPanel.classList.add('hidden');
     return;
   }
 
   adminPanel.classList.remove('hidden');
+  userHtml += '<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody>';
 
-  byId('users-table').innerHTML = `
-    <table>
-      <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead>
-      <tbody>
-        ${users.map((user) => `
-          <tr>
-            <td>${user.display_name}</td>
-            <td>${user.email}</td>
-            <td>
-              <select data-user-role="${user.id}">
-                ${['admin', 'editor', 'viewer'].map((role) => `<option value="${role}" ${role === user.role ? 'selected' : ''}>${role}</option>`).join('')}
-              </select>
-            </td>
-            <td><button type="button" class="button secondary" data-save-user="${user.id}">Save</button></td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
+  for (i = 0; i < users.length; i += 1) {
+    userHtml += '<tr>';
+    userHtml += '<td>' + users[i].display_name + '</td>';
+    userHtml += '<td>' + users[i].email + '</td>';
+    userHtml += '<td><select data-user-role="' + users[i].id + '">';
 
-  byId('audit-list').innerHTML = audit.map((entry) => `
-    <article>
-      <h5>${entry.action}</h5>
-      <p>${entry.actor_email}</p>
-      <small>${new Date(entry.created_at).toLocaleString()} - ${entry.details}</small>
-    </article>
-  `).join('') || '<p class="placeholder">No audit entries yet.</p>';
+    for (j = 0; j < roles.length; j += 1) {
+      userHtml += '<option value="' + roles[j] + '"';
+      if (roles[j] === users[i].role) {
+        userHtml += ' selected';
+      }
+      userHtml += '>' + roles[j] + '</option>';
+    }
 
-  byId('imports-list').innerHTML = imports.map((item) => `
-    <article>
-      <h5>${item.file_name}</h5>
-      <p>${item.row_count} rows, status: ${item.status}</p>
-      <small>${new Date(item.created_at).toLocaleString()} - ${item.notes}</small>
-    </article>
-  `).join('') || '<p class="placeholder">No imports yet.</p>';
+    userHtml += '</select></td>';
+    userHtml += '<td><button type="button" class="button secondary" data-save-user="' + users[i].id + '">Save</button></td>';
+    userHtml += '</tr>';
+  }
 
-  document.querySelectorAll('[data-save-user]').forEach((button) => {
-    button.addEventListener('click', async () => {
-      const userId = button.getAttribute('data-save-user');
-      const role = document.querySelector(`[data-user-role="${userId}"]`).value;
-      await api('user_role', {
-        method: 'POST',
-        body: JSON.stringify({ id: Number(userId), role }),
-      });
-      await loadAdmin();
-    });
-  });
+  userHtml += '</tbody></table>';
+  byId('users-table').innerHTML = userHtml;
+
+  if (!audit.length) {
+    auditHtml = '<p class="placeholder">No audit entries yet.</p>';
+  } else {
+    for (i = 0; i < audit.length; i += 1) {
+      auditHtml += '<article>';
+      auditHtml += '<h5>' + audit[i].action + '</h5>';
+      auditHtml += '<p>' + audit[i].actor_email + '</p>';
+      auditHtml += '<small>' + new Date(audit[i].created_at).toLocaleString() + ' - ' + audit[i].details + '</small>';
+      auditHtml += '</article>';
+    }
+  }
+
+  if (!imports.length) {
+    importHtml = '<p class="placeholder">No imports yet.</p>';
+  } else {
+    for (i = 0; i < imports.length; i += 1) {
+      importHtml += '<article>';
+      importHtml += '<h5>' + imports[i].file_name + '</h5>';
+      importHtml += '<p>' + imports[i].row_count + ' rows, status: ' + imports[i].status + '</p>';
+      importHtml += '<small>' + new Date(imports[i].created_at).toLocaleString() + ' - ' + imports[i].notes + '</small>';
+      importHtml += '</article>';
+    }
+  }
+
+  byId('audit-list').innerHTML = auditHtml;
+  byId('imports-list').innerHTML = importHtml;
+  attachRoleButtons();
 }
 
 function setPreview(html, links) {
-  const frame = byId('preview-frame');
+  var frame = byId('preview-frame');
+  var jsonLink = byId('open-json-link');
+  var htmlLink = byId('open-html-link');
+  var pdfLink = byId('open-pdf-link');
+
   frame.innerHTML = html || '<p class="placeholder">No preview available.</p>';
-  const jsonLink = byId('open-json-link');
-  const htmlLink = byId('open-html-link');
-  const pdfLink = byId('open-pdf-link');
 
   if (links) {
     jsonLink.href = links.json;
@@ -151,49 +212,62 @@ function setPreview(html, links) {
     jsonLink.classList.remove('disabled');
     htmlLink.classList.remove('disabled');
     pdfLink.classList.remove('disabled');
-  } else {
-    jsonLink.href = '#';
-    htmlLink.href = '#';
-    pdfLink.href = '#';
-    jsonLink.classList.add('disabled');
-    htmlLink.classList.add('disabled');
-    pdfLink.classList.add('disabled');
+    return;
   }
+
+  jsonLink.href = '#';
+  htmlLink.href = '#';
+  pdfLink.href = '#';
+  jsonLink.classList.add('disabled');
+  htmlLink.classList.add('disabled');
+  pdfLink.classList.add('disabled');
+}
+
+async function loadAdmin() {
+  var data = await api('users');
+  renderAdmin(data.users, data.audit, data.imports);
 }
 
 async function refreshBootstrap() {
-  const data = await api('bootstrap');
-  state.user = data.user;
+  var data = await api('bootstrap');
+
+  currentUser = data.user;
   renderStats(data.stats);
   renderTemplates(data.templates);
   renderDocuments(data.documents);
-  if (state.user) {
-    byId('session-chip').textContent = `${state.user.display_name} (${state.user.role})`;
+
+  if (currentUser) {
+    byId('session-chip').textContent = currentUser.display_name + ' (' + currentUser.role + ')';
+  } else {
+    byId('session-chip').textContent = '';
   }
-  toggleAppSections(Boolean(state.user));
-  if (state.user && state.user.role === 'admin') {
+
+  toggleAppSections(Boolean(currentUser));
+
+  if (currentUser && currentUser.role === 'admin') {
     await loadAdmin();
   }
 }
 
-async function loadAdmin() {
-  const data = await api('users');
-  renderAdmin(data.users, data.audit, data.imports);
-}
-
 async function handleLogin(event) {
+  var formData;
+  var data;
+
   event.preventDefault();
-  const formData = new FormData(event.currentTarget);
+  formData = new FormData(event.currentTarget);
+
   try {
-    const data = await api('login', {
+    data = await api('login', {
       method: 'POST',
       body: JSON.stringify({
         email: formData.get('email'),
         password: formData.get('password'),
       }),
     });
-    state.user = data.user;
-    setFeedback('login-feedback', `Logged in as ${data.user.display_name}.`);
+    authToken = data.token || '';
+    localStorage.setItem('dog_jwt', authToken);
+    currentUser = data.user;
+    setFeedback('login-feedback', 'Logged in as ' + data.user.display_name + '.', false);
     await refreshBootstrap();
   } catch (error) {
     setFeedback('login-feedback', error.message, true);
@@ -201,10 +275,15 @@ async function handleLogin(event) {
 }
 
 async function handleGenerate(event) {
+  var formData;
+  var mode;
+  var data = {};
+  var payload;
+  var response;
+
   event.preventDefault();
-  const formData = new FormData(event.currentTarget);
-  const mode = formData.get('mode');
-  let data = {};
+  formData = new FormData(event.currentTarget);
+  mode = formData.get('mode');
 
   if (mode === 'manual') {
     try {
@@ -215,22 +294,22 @@ async function handleGenerate(event) {
     }
   }
 
-  const payload = {
+  payload = {
     title: formData.get('title'),
     template_id: Number(formData.get('template_id')),
-    mode,
-    data,
+    mode: mode,
+    data: data,
     csv: formData.get('csv_payload'),
-    file_name: byId('csv-file').files[0]?.name || 'inline.csv',
+    file_name: byId('csv-file').files.length ? byId('csv-file').files[0].name : 'inline.csv',
   };
 
   try {
-    const response = await api('generate', {
+    response = await api('generate', {
       method: 'POST',
       body: JSON.stringify(payload),
     });
     setPreview(response.preview_html, response.links);
-    setFeedback('generate-feedback', `Generated ${response.created_count} document(s).`);
+    setFeedback('generate-feedback', 'Generated ' + response.created_count + ' document(s).', false);
     await refreshBootstrap();
   } catch (error) {
     setFeedback('generate-feedback', error.message, true);
@@ -238,15 +317,25 @@ async function handleGenerate(event) {
 }
 
 async function handleTemplateCreate(event) {
+  var formData;
+  var payload = {};
+  var entries;
+  var i;
+
   event.preventDefault();
-  const formData = new FormData(event.currentTarget);
+  formData = new FormData(event.currentTarget);
+  entries = Array.from(formData.entries());
+
+  for (i = 0; i < entries.length; i += 1) {
+    payload[entries[i][0]] = entries[i][1];
+  }
+
   try {
-    const payload = Object.fromEntries(formData.entries());
     await api('template_create', {
       method: 'POST',
       body: JSON.stringify(payload),
     });
-    setFeedback('template-feedback', 'Template saved successfully.');
+    setFeedback('template-feedback', 'Template saved successfully.', false);
     await refreshBootstrap();
   } catch (error) {
     setFeedback('template-feedback', error.message, true);
@@ -254,18 +343,21 @@ async function handleTemplateCreate(event) {
 }
 
 function handleModeChange() {
-  const mode = byId('mode-select').value;
-  byId('csv-field').classList.toggle('hidden', mode !== 'csv');
-  byId('csv-upload-field').classList.toggle('hidden', mode !== 'csv');
+  var isCsv = byId('mode-select').value === 'csv';
+  byId('csv-field').classList.toggle('hidden', !isCsv);
+  byId('csv-upload-field').classList.toggle('hidden', !isCsv);
 }
 
 function handleCsvUpload(event) {
-  const file = event.target.files?.[0];
+  var file = event.target.files[0];
+  var reader;
+
   if (!file) {
     return;
   }
-  const reader = new FileReader();
-  reader.onload = () => {
+
+  reader = new FileReader();
+  reader.onload = function () {
     byId('csv-payload').value = String(reader.result || '');
   };
   reader.readAsText(file);
@@ -273,19 +365,21 @@ function handleCsvUpload(event) {
 
 async function handleLogout() {
   await api('logout', { method: 'POST', body: JSON.stringify({}) });
-  state.user = null;
+  authToken = '';
+  localStorage.removeItem('dog_jwt');
+  currentUser = null;
   setPreview('', null);
   await refreshBootstrap();
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async function () {
   byId('login-form').addEventListener('submit', handleLogin);
   byId('generate-form').addEventListener('submit', handleGenerate);
   byId('template-form').addEventListener('submit', handleTemplateCreate);
   byId('mode-select').addEventListener('change', handleModeChange);
   byId('csv-file').addEventListener('change', handleCsvUpload);
   byId('logout-button').addEventListener('click', handleLogout);
+
   handleModeChange();
   await refreshBootstrap();
 });
-

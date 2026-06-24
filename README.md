@@ -1,17 +1,18 @@
 # DoG: Document Web Generator
 
-DoG is a modular web application built for the "Tehnologii Web" project. It generates and manages HTML and PDF documents from reusable templates, using manual JSON input, realistic random data, or CSV imports.
+DoG is a web application built for the "Tehnologii Web" project. It generates and manages HTML and PDF documents from reusable templates, using manual JSON input, realistic random data, or CSV imports.
 
 ## Stack
 
-- PHP 8 with plain server-side modules
+- PHP 8 with plain server-side functions
 - SQLite accessed through PDO prepared statements
 - HTML, CSS and vanilla JavaScript with asynchronous `fetch()` calls
+- JWT authentication with Bearer tokens
 - No client-side or server-side web frameworks
 
 ## Main features
 
-- role-based login for `admin`, `editor` and `viewer`
+- role-based login for `admin`, `editor` and `viewer` using JWT
 - document generation from reusable templates
 - dynamic templating with placeholders, conditional blocks and date helpers
 - import from CSV and manual JSON input
@@ -44,13 +45,14 @@ php -S 127.0.0.1:8000
 - `api.php` - AJAX endpoints and download actions
 - `bootstrap.php` - common setup helpers
 - `init_db.php` - SQLite initialization routine
-- `lib/` - database, auth, repositories, templating and PDF logic
+- `lib/` - database, auth, templating and PDF helper logic
 - `assets/` - CSS and browser JavaScript
 - `docs/` - mandatory project deliverables
 - `samples/` - CSV examples for imports
 
 ## Security notes
 
+- login uses JWT tokens sent in the `Authorization` header
 - all database writes use PDO prepared statements
 - generated template values are HTML-escaped on the server
 - document preview normalization strips script tags before rendering
@@ -60,4 +62,3 @@ php -S 127.0.0.1:8000
 
 - project source code: MIT License, see `LICENSE`
 - documentation and sample content: CC BY 4.0, see `CONTENT-LICENSE.md`
-

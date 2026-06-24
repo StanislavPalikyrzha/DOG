@@ -1,60 +1,56 @@
 <?php
-declare(strict_types=1);
 
-final class Database
+function db_bootstrap()
 {
-    private static ?PDO $pdo = null;
-
-    public static function bootstrap(): void
-    {
-        if (!is_dir(dirname(DATABASE_FILE))) {
-            mkdir(dirname(DATABASE_FILE), 0777, true);
-        }
-
-        if (!is_dir(EXPORTS_DIR)) {
-            mkdir(EXPORTS_DIR, 0777, true);
-        }
-
-        if (!file_exists(DATABASE_FILE)) {
-            self::initialize();
-        }
+    if (!is_dir(dirname(DATABASE_FILE))) {
+        mkdir(dirname(DATABASE_FILE), 0777, true);
     }
 
-    public static function pdo(): PDO
-    {
-        self::bootstrap();
-
-        if (self::$pdo === null) {
-            self::$pdo = new PDO('sqlite:' . DATABASE_FILE);
-            self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            self::$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        }
-
-        return self::$pdo;
+    if (!is_dir(EXPORTS_DIR)) {
+        mkdir(EXPORTS_DIR, 0777, true);
     }
 
-    public static function reset(): void
-    {
-        self::$pdo = null;
-        if (file_exists(DATABASE_FILE)) {
-            unlink(DATABASE_FILE);
-        }
-
-        foreach (glob(EXPORTS_DIR . '/*') ?: [] as $path) {
-            if (is_file($path)) {
-                unlink($path);
-            }
-        }
-
-        self::initialize();
+    if (!file_exists(DATABASE_FILE)) {
+        db_initialize();
     }
+}
 
-    private static function initialize(): void
-    {
+function db()
+{
+    static $pdo = null;
+
+    db_bootstrap();
+
+    if ($pdo === null) {
         $pdo = new PDO('sqlite:' . DATABASE_FILE);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    }
 
-        $schema = <<<'SQL'
+    return $pdo;
+}
+
+function db_reset()
+{
+    if (file_exists(DATABASE_FILE)) {
+        unlink(DATABASE_FILE);
+    }
+
+    foreach (glob(EXPORTS_DIR . '/*') ?: [] as $path) {
+        if (is_file($path)) {
+            unlink($path);
+        }
+    }
+
+    db_initialize();
+}
+
+function db_initialize()
+{
+    $pdo = new PDO('sqlite:' . DATABASE_FILE);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $schema = <<<'SQL'
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     display_name TEXT NOT NULL,
@@ -112,39 +108,41 @@ CREATE TABLE audit_log (
 );
 SQL;
 
-        $pdo->exec($schema);
+    $pdo->exec($schema);
 
-        $now = date('c');
-        $insertUser = $pdo->prepare(
-            'INSERT INTO users (display_name, email, password_hash, role, created_at) VALUES (:display_name, :email, :password_hash, :role, :created_at)'
-        );
+    $insertUser = $pdo->prepare(
+        'INSERT INTO users (display_name, email, password_hash, role, created_at) VALUES (:display_name, :email, :password_hash, :role, :created_at)'
+    );
+    $now = date('c');
 
-        foreach ([
-            ['Admin User', 'admin@dog.local', 'admin123', 'admin'],
-            ['Editor User', 'editor@dog.local', 'editor123', 'editor'],
-            ['Viewer User', 'viewer@dog.local', 'viewer123', 'viewer'],
-        ] as [$name, $email, $password, $role]) {
-            $insertUser->execute([
-                ':display_name' => $name,
-                ':email' => $email,
-                ':password_hash' => password_hash($password, PASSWORD_DEFAULT),
-                ':role' => $role,
-                ':created_at' => $now,
-            ]);
-        }
+    $users = [
+        ['Admin User', 'admin@dog.local', 'admin123', 'admin'],
+        ['Editor User', 'editor@dog.local', 'editor123', 'editor'],
+        ['Viewer User', 'viewer@dog.local', 'viewer123', 'viewer'],
+    ];
 
-        $insertTemplate = $pdo->prepare(
-            'INSERT INTO templates (name, slug, category, description, template_html, template_css, created_at, updated_at)
-             VALUES (:name, :slug, :category, :description, :template_html, :template_css, :created_at, :updated_at)'
-        );
+    foreach ($users as $user) {
+        $insertUser->execute([
+            ':display_name' => $user[0],
+            ':email' => $user[1],
+            ':password_hash' => password_hash($user[2], PASSWORD_DEFAULT),
+            ':role' => $user[3],
+            ':created_at' => $now,
+        ]);
+    }
 
-        $templates = [
-            [
-                'CV academic',
-                'cv-academic',
-                'CV',
-                'Template for student CVs generated from JSON or CSV data.',
-                <<<'HTML'
+    $insertTemplate = $pdo->prepare(
+        'INSERT INTO templates (name, slug, category, description, template_html, template_css, created_at, updated_at)
+         VALUES (:name, :slug, :category, :description, :template_html, :template_css, :created_at, :updated_at)'
+    );
+
+    $templates = [
+        [
+            'CV academic',
+            'cv-academic',
+            'CV',
+            'Template for student CVs generated from JSON or CSV data.',
+            <<<'HTML'
 <section class="doc-header">
   <h1>{{name}}</h1>
   <p class="lead">{{role}}</p>
@@ -168,14 +166,14 @@ SQL;
   <small>Generated on {{today}}</small>
 </section>
 HTML,
-                '.doc-header{border-bottom:2px solid #c4b79f;padding-bottom:1rem;margin-bottom:1rem}.lead{font-weight:700;color:#7a5940}h2{margin-top:1.4rem}'
-            ],
-            [
-                'Invoice simple',
-                'invoice-simple',
-                'Accounting',
-                'Simple invoice-like document for service quotes.',
-                <<<'HTML'
+            '.doc-header{border-bottom:2px solid #c4b79f;padding-bottom:1rem;margin-bottom:1rem}.lead{font-weight:700;color:#7a5940}h2{margin-top:1.4rem}',
+        ],
+        [
+            'Invoice simple',
+            'invoice-simple',
+            'Accounting',
+            'Simple invoice-like document for service quotes.',
+            <<<'HTML'
 <section class="doc-header">
   <h1>Invoice {{uppercase:number}}</h1>
   <p>Client: {{client}}</p>
@@ -191,14 +189,14 @@ HTML,
   {{if:notes}}<p>Notes: {{notes}}</p>{{/if:notes}}
 </section>
 HTML,
-                '.doc-header{display:flex;flex-direction:column;gap:.4rem;padding-bottom:1rem;border-bottom:2px solid #d6cdbf}h2{margin-top:1.4rem}'
-            ],
-            [
-                'Catalog card',
-                'catalog-card',
-                'Products',
-                'Product card template for catalogs or mini listings.',
-                <<<'HTML'
+            '.doc-header{display:flex;flex-direction:column;gap:.4rem;padding-bottom:1rem;border-bottom:2px solid #d6cdbf}h2{margin-top:1.4rem}',
+        ],
+        [
+            'Catalog card',
+            'catalog-card',
+            'Products',
+            'Product card template for catalogs or mini listings.',
+            <<<'HTML'
 <section class="doc-header">
   <h1>{{title}}</h1>
   <p class="lead">SKU {{sku}}</p>
@@ -210,23 +208,20 @@ HTML,
   <p>Updated: {{today}}</p>
 </section>
 HTML,
-                '.lead{font-weight:700;letter-spacing:.08em;color:#8d6b4c}.doc-header{border-bottom:1px dashed #c7b8a1;padding-bottom:.8rem;margin-bottom:1rem}'
-            ],
-        ];
+            '.lead{font-weight:700;letter-spacing:.08em;color:#8d6b4c}.doc-header{border-bottom:1px dashed #c7b8a1;padding-bottom:.8rem;margin-bottom:1rem}',
+        ],
+    ];
 
-        foreach ($templates as [$name, $slug, $category, $description, $templateHtml, $templateCss]) {
-            $insertTemplate->execute([
-                ':name' => $name,
-                ':slug' => $slug,
-                ':category' => $category,
-                ':description' => $description,
-                ':template_html' => $templateHtml,
-                ':template_css' => $templateCss,
-                ':created_at' => $now,
-                ':updated_at' => $now,
-            ]);
-        }
+    foreach ($templates as $template) {
+        $insertTemplate->execute([
+            ':name' => $template[0],
+            ':slug' => $template[1],
+            ':category' => $template[2],
+            ':description' => $template[3],
+            ':template_html' => $template[4],
+            ':template_css' => $template[5],
+            ':created_at' => $now,
+            ':updated_at' => $now,
+        ]);
     }
 }
-
-

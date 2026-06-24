@@ -1,23 +1,24 @@
 <?php
-declare(strict_types=1);
 
-session_start();
 date_default_timezone_set('Europe/Bucharest');
 
 define('APP_ROOT', __DIR__);
 define('DATABASE_FILE', APP_ROOT . '/database/dog.sqlite');
 define('EXPORTS_DIR', APP_ROOT . '/exports');
+define('JWT_SECRET', 'dog-tw-jwt-secret-2026');
+define('JWT_TTL_SECONDS', 60 * 60 * 12);
 
 require_once APP_ROOT . '/lib/Database.php';
-require_once APP_ROOT . '/lib/Auth.php';
 require_once APP_ROOT . '/lib/Repositories.php';
+require_once APP_ROOT . '/lib/Auth.php';
+require_once APP_ROOT . '/lib/Jwt.php';
 require_once APP_ROOT . '/lib/TemplateEngine.php';
 require_once APP_ROOT . '/lib/FakeData.php';
 require_once APP_ROOT . '/lib/PdfBuilder.php';
 
-Database::bootstrap();
+db_bootstrap();
 
-function json_response(array $payload, int $status = 200): never
+function json_response($payload, $status = 200)
 {
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
@@ -25,39 +26,46 @@ function json_response(array $payload, int $status = 200): never
     exit;
 }
 
-function request_json(): array
+function request_json()
 {
     $raw = file_get_contents('php://input');
+
     if ($raw === false || trim($raw) === '') {
         return [];
     }
 
     $decoded = json_decode($raw, true);
+
     return is_array($decoded) ? $decoded : [];
 }
 
-function current_user(): ?array
+function current_user()
 {
-    if (!isset($_SESSION['user_id'])) {
+    $token = request_bearer_token();
+    $payload = jwt_decode_token($token);
+
+    if (!$payload || empty($payload['sub'])) {
         return null;
     }
 
-    return UserRepository::findById((int) $_SESSION['user_id']);
+    return user_find_by_id((int) $payload['sub']);
 }
 
-function require_user(): array
+function require_user()
 {
     $user = current_user();
-    if ($user === null) {
+
+    if (!$user) {
         json_response(['ok' => false, 'error' => 'Authentication required.'], 401);
     }
 
     return $user;
 }
 
-function require_admin(): array
+function require_admin()
 {
     $user = require_user();
+
     if (($user['role'] ?? '') !== 'admin') {
         json_response(['ok' => false, 'error' => 'Admin access required.'], 403);
     }
@@ -65,9 +73,10 @@ function require_admin(): array
     return $user;
 }
 
-function require_editor(): array
+function require_editor()
 {
     $user = require_user();
+
     if (!in_array($user['role'] ?? '', ['admin', 'editor'], true)) {
         json_response(['ok' => false, 'error' => 'Editor access required.'], 403);
     }
@@ -75,16 +84,7 @@ function require_editor(): array
     return $user;
 }
 
-function base_url(): string
-{
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? '127.0.0.1:8000';
-    $scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
-
-    return $scheme . '://' . $host . ($scriptDir === '' ? '' : $scriptDir);
-}
-
-function html_page(string $title, string $body): string
+function html_page($title, $body)
 {
     return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' .
         '<title>' . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</title>' .
@@ -92,12 +92,11 @@ function html_page(string $title, string $body): string
         '</head><body><article>' . $body . '</article></body></html>';
 }
 
-function document_links(int $documentId): array
+function document_links($document_id)
 {
     return [
-        'json' => 'api.php?action=download_json&id=' . $documentId,
-        'html' => 'api.php?action=download_html&id=' . $documentId,
-        'pdf' => 'api.php?action=download_pdf&id=' . $documentId,
+        'json' => 'api.php?action=download_json&id=' . $document_id,
+        'html' => 'api.php?action=download_html&id=' . $document_id,
+        'pdf' => 'api.php?action=download_pdf&id=' . $document_id,
     ];
 }
-
