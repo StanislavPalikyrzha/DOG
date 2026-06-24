@@ -2,6 +2,8 @@
 
 function pdf_build($title, $html, $path)
 {
+    $html = preg_replace('/<style\b[^>]*>.*?<\/style>/is', '', $html);
+    $html = preg_replace('/<script\b[^>]*>.*?<\/script>/is', '', $html);
     $text = str_replace(['<br>', '<br/>', '<br />', '</p>', '</li>', '</section>'], ["\n", "\n", "\n", "\n\n", "\n", "\n"], $html);
     $text = strip_tags($text);
     $text = html_entity_decode($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
