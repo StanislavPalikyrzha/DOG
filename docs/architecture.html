@@ -11,19 +11,19 @@
   <header>
     <small>Architecture and C4-style overview</small>
     <h1>Application architecture</h1>
-    <p>The project follows a lightweight service-oriented structure. The browser communicates asynchronously with PHP endpoints, which delegate persistence and business rules to reusable modules.</p>
+    <p>The project uses a simple browser to PHP to SQLite flow. The interface runs in the browser, sends asynchronous requests with Fetch API, and the PHP backend validates JWT tokens, processes documents and stores data in SQLite.</p>
   </header>
 
   <figure>
     <div class="diagram">
       <div class="diagram-flow">
-        <div class="diagram-box"><strong>User browser</strong><br>HTML + CSS + vanilla JavaScript<br>Fetch API, responsive dashboard, admin panel</div>
-        <div class="diagram-box"><strong>PHP application layer</strong><br><code>index.php</code>, <code>api.php</code>, session auth, AJAX routing</div>
+        <div class="diagram-box"><strong>User browser</strong><br>HTML + CSS + vanilla JavaScript<br>DOM events, Fetch API, admin panel, localStorage JWT token</div>
+        <div class="diagram-box"><strong>PHP application layer</strong><br><code>index.php</code>, <code>api.php</code>, JWT auth, request routing, export endpoints</div>
         <div class="grid-two">
-        <div class="diagram-box"><strong>Business modules</strong><br>Database helpers, templating, fake data, PDF builder, audit logging</div>
-          <div class="diagram-box"><strong>Persistence</strong><br>SQLite database with users, templates, documents, imports and audit log</div>
+        <div class="diagram-box"><strong>Helper logic</strong><br>database access, template rendering, random demo data, PDF builder, audit logging</div>
+          <div class="diagram-box"><strong>Persistence</strong><br>SQLite tables: users, templates, documents, import jobs and audit log</div>
         </div>
-        <div class="diagram-box"><strong>Outputs</strong><br>HTML preview, PDF exports, CSV import jobs, project documentation</div>
+        <div class="diagram-box"><strong>Outputs</strong><br>HTML preview, JSON export, PDF export, CSV import processing, project documentation</div>
       </div>
     </div>
     <figcaption>Figure 1. High-level architecture of the DoG web application.</figcaption>

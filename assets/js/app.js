@@ -5,6 +5,22 @@ function byId(id) {
   return document.getElementById(id);
 }
 
+function withAuthToken(url) {
+  if (!authToken) {
+    return url;
+  }
+
+  if (url.indexOf('token=') !== -1) {
+    return url;
+  }
+
+  if (url.indexOf('?') === -1) {
+    return url + '?token=' + encodeURIComponent(authToken);
+  }
+
+  return url + '&token=' + encodeURIComponent(authToken);
+}
+
 async function api(action, options) {
   var requestOptions = options || {};
   var headers = { 'Content-Type': 'application/json' };
@@ -97,9 +113,9 @@ function renderDocuments(documents) {
     html += '<span>' + new Date(doc.created_at).toLocaleString() + '</span>';
     html += '</div>';
     html += '<div class="link-row">';
-    html += '<a class="button secondary" href="api.php?action=download_json&id=' + doc.id + '" target="_blank" rel="noreferrer">Open JSON</a>';
-    html += '<a class="button secondary" href="api.php?action=download_html&id=' + doc.id + '" target="_blank" rel="noreferrer">Open HTML</a>';
-    html += '<a class="button secondary" href="api.php?action=download_pdf&id=' + doc.id + '" target="_blank" rel="noreferrer">Open PDF</a>';
+    html += '<a class="button secondary" href="' + withAuthToken('api.php?action=download_json&id=' + doc.id) + '" target="_blank" rel="noreferrer">Open JSON</a>';
+    html += '<a class="button secondary" href="' + withAuthToken('api.php?action=download_html&id=' + doc.id) + '" target="_blank" rel="noreferrer">Open HTML</a>';
+    html += '<a class="button secondary" href="' + withAuthToken('api.php?action=download_pdf&id=' + doc.id) + '" target="_blank" rel="noreferrer">Open PDF</a>';
     html += '</div>';
     html += '</article>';
   }
@@ -206,9 +222,9 @@ function setPreview(html, links) {
   frame.innerHTML = html || '<p class="placeholder">No preview available.</p>';
 
   if (links) {
-    jsonLink.href = links.json;
-    htmlLink.href = links.html;
-    pdfLink.href = links.pdf;
+    jsonLink.href = withAuthToken(links.json);
+    htmlLink.href = withAuthToken(links.html);
+    pdfLink.href = withAuthToken(links.pdf);
     jsonLink.classList.remove('disabled');
     htmlLink.classList.remove('disabled');
     pdfLink.classList.remove('disabled');

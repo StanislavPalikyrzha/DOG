@@ -83,6 +83,10 @@ function request_bearer_token()
 {
     $header = '';
 
+    if (!empty($_GET['token'])) {
+        return trim((string) $_GET['token']);
+    }
+
     if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         $header = $_SERVER['HTTP_AUTHORIZATION'];
     } elseif (function_exists('getallheaders')) {
